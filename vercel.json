@@ -1,6 +1,36 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
+  "routes": [
+    {
+      "src": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "30ajasa.com"
+        }
+      ],
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "X-Robots-Tag": "noindex, nofollow, noarchive"
+      },
+      "status": 410
+    },
+    {
+      "src": "/(.*)",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.30ajasa.com"
+        }
+      ],
+      "headers": {
+        "Cache-Control": "public, max-age=0, must-revalidate",
+        "X-Robots-Tag": "noindex, nofollow, noarchive"
+      },
+      "status": 410
+    }
+  ],
   "rewrites": [
     { "source": "/building", "destination": "/pages/building/index.html" },
     { "source": "/building/", "destination": "/pages/building/index.html" },
