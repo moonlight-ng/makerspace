@@ -58,7 +58,7 @@ supabase db push --linked
 Production requires:
 
 ```dotenv
-STUDIO_ALLOWED_EMAILS=tokalejaiye@gmail.com,makerspace@16by16.co,ope@moonlight.ng,theaishabello@gmail.com
+STUDIO_ALLOWED_EMAILS=tokalejaiye@gmail.com,makerspace@16by16.co,ope@moonlight.ng,theaishabello@gmail.com,info@16by16.co
 STUDIO_SESSION_SECRET=random_value_with_at_least_32_bytes
 ```
 

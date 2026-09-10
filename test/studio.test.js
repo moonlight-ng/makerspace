@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
 import test from 'node:test';
 
 import studioOrdersHandler from '../api/studio/orders.js';
@@ -26,7 +27,7 @@ import {
 const NOW = Date.parse('2026-09-10T12:00:00.000Z');
 const STUDIO_ENV = {
     NODE_ENV: 'production',
-    STUDIO_ALLOWED_EMAILS: ' MakerSpace@16by16.co, ope@moonlight.ng,invalid ',
+    STUDIO_ALLOWED_EMAILS: ' MakerSpace@16by16.co, ope@moonlight.ng, Info@16by16.co,invalid ',
     STUDIO_SESSION_SECRET: 'this-is-a-test-secret-with-more-than-32-bytes',
 };
 
@@ -43,7 +44,7 @@ test('Studio email allowlist is normalized and invalid entries are discarded', (
     assert.equal(normalizeStudioEmail('not-an-email'), null);
     assert.deepEqual(
         [...getAllowedStudioEmails(STUDIO_ENV)],
-        ['makerspace@16by16.co', 'ope@moonlight.ng'],
+        ['makerspace@16by16.co', 'ope@moonlight.ng', 'info@16by16.co'],
     );
 });
 
@@ -95,6 +96,16 @@ test('approved Studio code requests and verification use Supabase email OTP', as
         method: 'verify',
         input: { email: 'makerspace@16by16.co', token: '123456', type: 'email' },
     });
+});
+
+test('Supabase uses the OTP email body for first-time and returning Studio users', async () => {
+    const config = await readFile(new URL('../supabase/config.toml', import.meta.url), 'utf8');
+    const template = await readFile(new URL('../supabase/templates/studio-login.html', import.meta.url), 'utf8');
+
+    assert.match(config, /\[auth\.email\.template\.magic_link\][\s\S]*?content_path = "\.\/supabase\/templates\/studio-login\.html"/);
+    assert.match(config, /\[auth\.email\.template\.confirmation\][\s\S]*?content_path = "\.\/supabase\/templates\/studio-login\.html"/);
+    assert.match(template, /{{ \.Token }}/);
+    assert.doesNotMatch(template, /{{ \.ConfirmationURL }}/);
 });
 
 test('Studio sessions reject tampering, expiry, and removed allowlist entries', () => {

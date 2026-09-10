@@ -25,6 +25,10 @@ max_frequency = "1m0s"
 subject = "Your Makerspace Studio code"
 content_path = "./supabase/templates/studio-login.html"
 
+[auth.email.template.confirmation]
+subject = "Your Makerspace Studio code"
+content_path = "./supabase/templates/studio-login.html"
+
 [auth.mfa.totp]
 enroll_enabled = true
 verify_enabled = true
