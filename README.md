@@ -62,7 +62,7 @@ STUDIO_ALLOWED_EMAILS=tokalejaiye@gmail.com,makerspace@16by16.co,ope@moonlight.n
 STUDIO_SESSION_SECRET=random_value_with_at_least_32_bytes
 ```
 
-The checked-in Supabase configuration enables email authentication, sends a six-digit code using `supabase/templates/studio-login.html`, expires codes after ten minutes and limits requests to once per minute. Auth email is delivered through the shared Resend account as `Makerspace <makerspace@opemipo.com>`. Provide the send-only `RESEND_API_KEY` only while running `supabase config push`; it is not a Vercel runtime secret. The Studio order-search migration must also be applied before the dashboard is used.
+The checked-in Supabase configuration enables email authentication, sends a six-digit code using `supabase/templates/studio-login.html`, expires codes after ten minutes and limits requests to once per minute. Auth email is delivered through Resend as `Makerspace <makerspace@moonlight.ng>`. Put the send-only `RESEND_API_KEY` in the ignored `supabase/.env.local` file before pushing Auth configuration; it is not a Vercel runtime secret. The Studio order-search migration must also be applied before the dashboard is used.
 
 ## Paystack webhook
 

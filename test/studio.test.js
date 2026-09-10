@@ -102,7 +102,7 @@ test('Supabase uses the OTP email body for first-time and returning Studio users
     const config = await readFile(new URL('../supabase/config.toml', import.meta.url), 'utf8');
     const template = await readFile(new URL('../supabase/templates/studio-login.html', import.meta.url), 'utf8');
 
-    assert.match(config, /\[auth\.email\.smtp\][\s\S]*?host = "smtp\.resend\.com"[\s\S]*?pass = "env\(RESEND_API_KEY\)"/);
+    assert.match(config, /\[auth\.email\.smtp\][\s\S]*?host = "smtp\.resend\.com"[\s\S]*?pass = "env\(RESEND_API_KEY\)"[\s\S]*?admin_email = "makerspace@moonlight\.ng"/);
     assert.match(config, /\[auth\.email\.template\.magic_link\][\s\S]*?content_path = "\.\/supabase\/templates\/studio-login\.html"/);
     assert.match(config, /\[auth\.email\.template\.confirmation\][\s\S]*?content_path = "\.\/supabase\/templates\/studio-login\.html"/);
     assert.match(template, /{{ \.Token }}/);
