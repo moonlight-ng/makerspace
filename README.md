@@ -60,3 +60,19 @@ https://makerspace.16by16.co/api/payments/webhook
 ```
 
 The webhook validates `x-paystack-signature` with the server-only secret key and handles `charge.success` idempotently.
+
+## Notion booking mirror
+
+Production booking and payment records are mirrored into the `Bookings` database inside [Workshop Bookings](https://app.notion.com/p/3d7599ecfca68018b841f2b0b84f5097). Supabase remains the source of truth.
+
+The Supabase migration adds a durable sync queue to each booking. Inserts and relevant booking or payment updates mark the record pending. A protected Vercel cron function claims pending rows once per minute and upserts them into Notion by booking ID. Failed work remains pending for the next run, and stale claims are automatically reclaimed after 15 minutes.
+
+Production requires:
+
+```dotenv
+NOTION_API_KEY=ntn_secret_from_notion
+NOTION_DATA_SOURCE_ID=a56e285a-4b71-47aa-8d81-e11326329459
+CRON_SECRET=random_value_at_least_16_characters
+```
+
+Create an internal Notion integration with read, insert, and update-content capabilities, connect it to the `Bookings` database, and use its secret as `NOTION_API_KEY`. `CRON_SECRET` is sent automatically by Vercel in the cron request's `Authorization` header.

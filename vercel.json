@@ -1,6 +1,12 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
+  "crons": [
+    {
+      "path": "/api/cron/sync-notion",
+      "schedule": "* * * * *"
+    }
+  ],
   "routes": [
     {
       "src": "/(.*)",

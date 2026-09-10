@@ -15,6 +15,11 @@ import {
     transactionMatchesPayment,
 } from '../server/paystack.js'
 import { cancelBooking, validateBooking, validateBookingCancellation } from '../server/bookings.js'
+import {
+    getNotionConfig,
+    notionPropertiesForBooking,
+    upsertNotionBooking,
+} from '../server/notion.js'
 
 const validInput = {
     eventSlug: 'intro-to-3d-printing-2026-09-03',
@@ -166,4 +171,95 @@ test('verified transaction must match amount, customer and Makerspace subaccount
     assert.equal(transactionMatchesPayment(transaction, payment), true)
     assert.equal(transactionMatchesPayment({ ...transaction, amount: 2_999_999 }, payment), false)
     assert.equal(transactionMatchesPayment({ ...transaction, subaccount: {} }, payment), false)
+})
+
+test('booking rows are mapped to the Workshop Bookings Notion schema', () => {
+    const properties = notionPropertiesForBooking({
+        id: '5a15f50d-6e09-4dc1-9375-c9b09a3cc451',
+        class_slug: WORKSHOP.slug,
+        event_slug: validInput.eventSlug,
+        session_date: '2026-09-03',
+        session_period: 'evening',
+        customer_name: 'Test Maker',
+        customer_email: 'maker@example.com',
+        quantity: 1,
+        status: 'paid',
+        expires_at: '2026-09-01T12:30:00.000Z',
+        created_at: '2026-09-01T12:00:00.000Z',
+        makerspace_payments: [{
+            reference: 'mksp-example',
+            environment: 'live',
+            amount: 3_000_000,
+            currency: 'NGN',
+            status: 'success',
+            paid_at: '2026-09-01T12:05:00.000Z',
+        }],
+    }, '2026-09-01T12:06:00.000Z')
+
+    assert.equal(properties.Booking.title[0].text.content, 'Test Maker — 2026-09-03')
+    assert.equal(properties.Workshop.rich_text[0].text.content, WORKSHOP.name)
+    assert.equal(properties.Amount.number, 30_000)
+    assert.equal(properties['Booking Status'].select.name, 'Paid')
+    assert.equal(properties['Payment Status'].select.name, 'Success')
+    assert.deepEqual(properties['Session Date'].date, { start: '2026-09-03' })
+    assert.deepEqual(properties['Hold Expires At'].date, { start: '2026-09-01T12:30:00.000Z' })
+})
+
+test('Notion configuration is optional only when both settings are absent', () => {
+    assert.equal(getNotionConfig({}), null)
+    assert.throws(
+        () => getNotionConfig({ NOTION_API_KEY: 'ntn_example' }),
+        /NOTION_DATA_SOURCE_ID/,
+    )
+    assert.deepEqual(getNotionConfig({
+        NOTION_API_KEY: 'ntn_example',
+        NOTION_DATA_SOURCE_ID: 'collection://a56e285a-4b71-47aa-8d81-e11326329459',
+    }), {
+        apiKey: 'ntn_example',
+        dataSourceId: 'a56e285a-4b71-47aa-8d81-e11326329459',
+    })
+})
+
+test('Notion upsert finds a booking by ID before creating a new page', async () => {
+    const requests = []
+    const request = async (url, options) => {
+        requests.push({ url, options })
+        const payload = requests.length === 1
+            ? { results: [] }
+            : { id: 'notion-page-id' }
+        return {
+            ok: true,
+            status: 200,
+            headers: { get: () => null },
+            async json() { return payload },
+        }
+    }
+    const booking = {
+        id: '5a15f50d-6e09-4dc1-9375-c9b09a3cc451',
+        class_slug: WORKSHOP.slug,
+        event_slug: validInput.eventSlug,
+        session_date: '2026-09-03',
+        session_period: 'evening',
+        customer_name: 'Test Maker',
+        customer_email: 'maker@example.com',
+        quantity: 1,
+        status: 'reserved',
+        expires_at: '2026-09-01T12:30:00.000Z',
+        created_at: '2026-09-01T12:00:00.000Z',
+        makerspace_payments: [{
+            reference: 'mksp-example',
+            environment: 'test',
+            amount: 3_000_000,
+            currency: 'NGN',
+            status: 'pending',
+        }],
+    }
+
+    assert.equal(await upsertNotionBooking(booking, {
+        apiKey: 'ntn_example',
+        dataSourceId: 'a56e285a-4b71-47aa-8d81-e11326329459',
+    }, request), 'notion-page-id')
+    assert.match(requests[0].url, /\/data_sources\/a56e285a-4b71-47aa-8d81-e11326329459\/query$/)
+    assert.match(requests[1].url, /\/pages$/)
+    assert.equal(JSON.parse(requests[1].options.body).parent.type, 'data_source_id')
 })
