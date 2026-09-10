@@ -37,6 +37,9 @@ content_path = "./supabase/templates/studio-login.html"
 subject = "Your Makerspace Studio code"
 content_path = "./supabase/templates/studio-login.html"
 
+[auth.rate_limit]
+email_sent = 60
+
 [auth.mfa.totp]
 enroll_enabled = true
 verify_enabled = true
