@@ -23,8 +23,10 @@
     const panelLayer = document.getElementById('studio-panel-layer');
     const panel = document.getElementById('studio-order-panel');
     const panelTitle = document.getElementById('studio-order-title');
+    const panelSubtitle = document.getElementById('studio-order-subtitle');
     const panelStatus = document.getElementById('studio-panel-status');
     const panelContent = document.getElementById('studio-panel-content');
+    const progress = document.getElementById('studio-progress');
     const paystackLink = document.getElementById('studio-paystack-link');
     const copyReference = document.getElementById('studio-copy-reference');
 
@@ -39,6 +41,7 @@
     let listRequest = null;
     let lastFocused = null;
     let activeOrder = null;
+    let activeOrderId = null;
 
     const request = async (url, options = {}) => {
         const { headers = {}, ...requestOptions } = options;
@@ -96,6 +99,8 @@
         }).format(parsed);
         return `${formatted} · ${titleCase(period)}`;
     };
+
+    const shortOrderId = (order) => `#${String(order?.id || '').slice(0, 8).toUpperCase()}`;
 
     const setButtonBusy = (button, busy, label) => {
         if (!button.dataset.label) button.dataset.label = button.textContent;
@@ -175,13 +180,37 @@
         row.tabIndex = 0;
         row.dataset.orderId = order.id;
         row.setAttribute('aria-label', `Open order for ${order.customerName}`);
+        row.setAttribute('aria-selected', 'false');
 
         const customer = createCell();
+        const customerFull = document.createElement('div');
+        customerFull.className = 'studio-order-full-customer';
         const customerName = document.createElement('strong');
         customerName.textContent = order.customerName;
         const customerEmail = document.createElement('span');
         customerEmail.textContent = order.customerEmail;
-        customer.append(customerName, customerEmail);
+        customerFull.append(customerName, customerEmail);
+
+        const compact = document.createElement('div');
+        compact.className = 'studio-order-compact';
+        const compactTop = document.createElement('div');
+        compactTop.className = 'studio-order-compact-top';
+        const compactId = document.createElement('span');
+        compactId.textContent = shortOrderId(order);
+        const compactState = document.createElement('span');
+        compactState.textContent = titleCase(order.state);
+        compactTop.append(compactId, compactState);
+        const compactWorkshop = document.createElement('strong');
+        compactWorkshop.textContent = order.workshop;
+        const compactBottom = document.createElement('div');
+        compactBottom.className = 'studio-order-compact-bottom';
+        const compactCustomer = document.createElement('span');
+        compactCustomer.textContent = order.customerName;
+        const compactAmount = document.createElement('span');
+        compactAmount.textContent = formatAmount(order.amount, order.currency);
+        compactBottom.append(compactCustomer, compactAmount);
+        compact.append(compactTop, compactWorkshop, compactBottom);
+        customer.append(customerFull, compact);
 
         const session = createCell('studio-order-session');
         const workshop = document.createElement('strong');
@@ -211,15 +240,21 @@
         reference.textContent = order.reference;
         ordered.append(time, reference);
 
-        const arrow = createCell('studio-row-arrow');
-        arrow.setAttribute('aria-hidden', 'true');
-        arrow.textContent = '→';
-        row.append(customer, session, amount, state, ordered, arrow);
+        row.append(customer, session, amount, state, ordered);
         return row;
+    }
+
+    function setSelectedRow(orderId) {
+        ordersBody.querySelectorAll('[data-order-id]').forEach((row) => {
+            const selected = row.dataset.orderId === orderId;
+            row.classList.toggle('is-selected', selected);
+            row.setAttribute('aria-selected', String(selected));
+        });
     }
 
     function renderOrders() {
         ordersBody.replaceChildren(...orders.map(orderRow));
+        setSelectedRow(activeOrderId);
         const label = total === 1 ? '1 order' : `${total.toLocaleString('en-NG')} orders`;
         orderCount.textContent = label;
         listFrame.setAttribute('aria-busy', String(loadingOrders));
@@ -288,27 +323,41 @@
 
     function fillOrderPanel(order) {
         activeOrder = order;
-        panelTitle.textContent = order.customerName;
+        activeOrderId = order.id;
+        panelTitle.textContent = shortOrderId(order);
+        panelSubtitle.textContent = `${order.workshop} · ${formatSession(order.sessionDate, order.sessionPeriod)}`;
         detail('amount', formatAmount(order.amount, order.currency));
-        const state = panelContent.querySelector('[data-detail="state"]');
+        const state = panel.querySelector('[data-detail="state"]');
         state.textContent = titleCase(order.state);
         state.dataset.state = order.state;
         detail('customerName', order.customerName);
         detail('customerEmail', order.customerEmail);
         detail('workshop', order.workshop);
         detail('session', formatSession(order.sessionDate, order.sessionPeriod));
-        detail('quantity', String(order.quantity));
+        detail('quantity', `${order.quantity} ${Number(order.quantity) === 1 ? 'seat' : 'seats'}`);
         detail('bookingStatus', titleCase(order.bookingStatus));
         detail('id', order.id);
         detail('createdAt', formatDate(order.createdAt));
         detail('expiresAt', formatDate(order.expiresAt));
         detail('paymentStatus', titleCase(order.paymentStatus));
-        detail('providerStatus', titleCase(order.providerStatus));
         detail('environment', titleCase(order.environment));
         detail('reference', order.reference);
-        detail('providerTransactionId', order.providerTransactionId);
-        detail('paidAt', formatDate(order.paidAt));
-        detail('verifiedAt', formatDate(order.verifiedAt));
+
+        const steps = [...progress.querySelectorAll('[data-progress-step]')];
+        steps.forEach((step) => {
+            step.removeAttribute('data-complete');
+            step.removeAttribute('aria-current');
+        });
+        const bookingStep = progress.querySelector('[data-progress-step="booking"]');
+        const paymentStep = progress.querySelector('[data-progress-step="payment"]');
+        const sessionStep = progress.querySelector('[data-progress-step="session"]');
+        bookingStep.dataset.complete = 'true';
+        if (order.state === 'paid') {
+            paymentStep.dataset.complete = 'true';
+            sessionStep.setAttribute('aria-current', 'step');
+        } else {
+            paymentStep.setAttribute('aria-current', 'step');
+        }
 
         try {
             const url = new URL(order.paystackDashboardUrl);
@@ -320,25 +369,32 @@
         }
 
         copyReference.hidden = !order.reference;
-        copyReference.textContent = 'Copy payment reference';
+        copyReference.textContent = 'Copy reference';
         panelStatus.textContent = '';
         panelContent.hidden = false;
+        setSelectedRow(order.id);
     }
 
     async function openOrder(orderId, { updateUrl = true } = {}) {
         if (!orderId) return;
-        lastFocused = document.activeElement;
+        const openingPanel = panelLayer.hidden;
+        if (openingPanel) lastFocused = document.activeElement;
+        activeOrderId = orderId;
         panelLayer.hidden = false;
         document.body.classList.add('studio-panel-open');
+        setSelectedRow(orderId);
         panelContent.hidden = true;
         panelStatus.textContent = 'Loading order…';
         panelTitle.textContent = 'Loading…';
-        panel.focus();
+        panelSubtitle.textContent = 'Loading order details…';
+        if (openingPanel) panel.focus();
 
         if (updateUrl) {
             const url = new URL(window.location.href);
-            url.searchParams.set('order', orderId);
-            window.history.pushState({ studioOrder: true, orderId }, '', url);
+            if (url.searchParams.get('order') !== orderId) {
+                url.searchParams.set('order', orderId);
+                window.history.pushState({ studioOrder: true, orderId }, '', url);
+            }
         }
 
         try {
@@ -347,6 +403,7 @@
             if (error.status === 401) return showLogin();
             activeOrder = null;
             panelTitle.textContent = 'Order unavailable';
+            panelSubtitle.textContent = '';
             panelStatus.textContent = error.message;
         }
     }
@@ -356,6 +413,8 @@
         panelLayer.hidden = true;
         document.body.classList.remove('studio-panel-open');
         activeOrder = null;
+        activeOrderId = null;
+        setSelectedRow(null);
         if (updateUrl) {
             if (window.history.state?.studioOrder) {
                 window.history.back();
@@ -470,19 +529,6 @@
 
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !panelLayer.hidden) closeOrder();
-        if (event.key !== 'Tab' || panelLayer.hidden) return;
-        const focusable = [...panel.querySelectorAll('a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])')]
-            .filter((element) => !element.hidden);
-        if (!focusable.length) return;
-        const first = focusable[0];
-        const last = focusable[focusable.length - 1];
-        if (event.shiftKey && document.activeElement === first) {
-            event.preventDefault();
-            last.focus();
-        } else if (!event.shiftKey && document.activeElement === last) {
-            event.preventDefault();
-            first.focus();
-        }
     });
 
     window.addEventListener('popstate', () => {

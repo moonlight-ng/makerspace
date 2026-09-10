@@ -259,3 +259,18 @@ test('Studio order API rejects unauthenticated requests before querying storage'
     assert.equal(response.headers['cache-control'], 'no-store');
     assert.equal(response.headers['x-frame-options'], 'DENY');
 });
+
+test('Studio uses the minimal neutral master-detail order design', async () => {
+    const [html, css, script] = await Promise.all([
+        readFile(new URL('../pages/studio/index.html', import.meta.url), 'utf8'),
+        readFile(new URL('../app/styles/studio.css', import.meta.url), 'utf8'),
+        readFile(new URL('../app/scripts/studio.js', import.meta.url), 'utf8'),
+    ]);
+
+    assert.match(html, /class="studio-workspace"/);
+    assert.match(html, /class="studio-detail-facts"/);
+    assert.doesNotMatch(html, /<svg/);
+    assert.match(css, /--studio-soft:\s*#efeee9/i);
+    assert.match(css, /\.studio-order-row\.is-selected[\s\S]*?background:\s*var\(--studio-soft\)/);
+    assert.match(script, /\/api\/studio\/orders/);
+});
