@@ -1,7 +1,13 @@
 import { resolve } from 'path'
 import { randomUUID } from 'node:crypto'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 import { viteStaticCopy } from 'vite-plugin-static-copy'
+import studioLogoutHandler from './api/studio/auth/logout.js'
+import studioRequestHandler from './api/studio/auth/request.js'
+import studioVerifyHandler from './api/studio/auth/verify.js'
+import studioOrdersHandler from './api/studio/orders.js'
+import studioOrderHandler from './api/studio/orders/[bookingId].js'
+import studioSessionHandler from './api/studio/session.js'
 import {
     EVENTS,
     getEvent,
@@ -177,6 +183,29 @@ const bookingApiPlugin = () => {
     }
 }
 
+const studioApiPlugin = () => {
+    const handlers = new Map([
+        ['/api/studio/auth/request', studioRequestHandler],
+        ['/api/studio/auth/verify', studioVerifyHandler],
+        ['/api/studio/auth/logout', studioLogoutHandler],
+        ['/api/studio/session', studioSessionHandler],
+        ['/api/studio/orders', studioOrdersHandler],
+    ])
+
+    return {
+        name: 'studio-api',
+        configureServer(server) {
+            server.middlewares.use(async (req, res, next) => {
+                const pathname = new URL(req.url, 'http://localhost').pathname.replace(/\/$/, '')
+                const handler = handlers.get(pathname)
+                    || (/^\/api\/studio\/orders\/[^/]+$/.test(pathname) ? studioOrderHandler : null)
+                if (!handler) return next()
+                await handler(req, res)
+            })
+        },
+    }
+}
+
 const rewritePlugin = () => {
     return {
         name: 'rewrite-middleware',
@@ -192,6 +221,11 @@ const rewritePlugin = () => {
                     req.url = req.url.replace('/film-club', '/pages/film-club')
                 } else if (req.url.startsWith('/payment-complete')) {
                     req.url = req.url.replace('/payment-complete', '/pages/payment-complete')
+                } else if (req.url.startsWith('/studio')) {
+                    const studioUrl = new URL(req.url, 'http://localhost')
+                    if (studioUrl.pathname === '/studio' || studioUrl.pathname === '/studio/') {
+                        req.url = `/pages/studio/index.html${studioUrl.search}`
+                    }
                 }
                 next()
             })
@@ -199,10 +233,16 @@ const rewritePlugin = () => {
     }
 }
 
-export default defineConfig(() => {
+export default defineConfig(({ mode }) => {
+    const serverEnvironment = loadEnv(mode, process.cwd(), '')
+    for (const [key, value] of Object.entries(serverEnvironment)) {
+        if (process.env[key] === undefined) process.env[key] = value
+    }
+
     return {
         plugins: [
             bookingApiPlugin(),
+            studioApiPlugin(),
             rewritePlugin(),
             viteStaticCopy({
                 targets: [
@@ -222,6 +262,7 @@ export default defineConfig(() => {
                     filmClub: resolve(__dirname, 'pages/film-club/index.html'),
                     makerspace: resolve(__dirname, 'pages/makerspace/index.html'),
                     paymentComplete: resolve(__dirname, 'pages/payment-complete/index.html'),
+                    studio: resolve(__dirname, 'pages/studio/index.html'),
                     archiveV1: resolve(__dirname, 'archive/v1/index.html'),
                     archiveV1Building: resolve(__dirname, 'archive/v1/building/index.html'),
                     archiveV1Contact: resolve(__dirname, 'archive/v1/contact/index.html'),

@@ -51,6 +51,19 @@ supabase link --project-ref dhmjtceactmvmdtbeium
 supabase db push --linked
 ```
 
+## Studio orders
+
+`/studio` is a private, read-only order dashboard. Approved users request a six-digit Supabase Auth email code, then receive a signed, HTTP-only Studio session lasting seven days. Browser sessions never receive Supabase or Paystack credentials and cannot query the private tables directly.
+
+Production requires:
+
+```dotenv
+STUDIO_ALLOWED_EMAILS=tokalejaiye@gmail.com,makerspace@16by16.co,ope@moonlight.ng,theaishabello@gmail.com
+STUDIO_SESSION_SECRET=random_value_with_at_least_32_bytes
+```
+
+The checked-in Supabase configuration enables email authentication, sends a six-digit code using `supabase/templates/studio-login.html`, expires codes after ten minutes and limits requests to once per minute. Run `supabase config push` to apply it to the linked project. The Studio order-search migration must also be applied before the dashboard is used.
+
 ## Paystack webhook
 
 Configure the matching Paystack integration to send webhooks to:

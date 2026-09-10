@@ -37,6 +37,28 @@
       "status": 410
     }
   ],
+  "headers": [
+    {
+      "source": "/studio",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-store, max-age=0" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "no-referrer" }
+      ]
+    },
+    {
+      "source": "/studio/",
+      "headers": [
+        { "key": "Cache-Control", "value": "private, no-store, max-age=0" },
+        { "key": "X-Robots-Tag", "value": "noindex, nofollow, noarchive" },
+        { "key": "X-Frame-Options", "value": "DENY" },
+        { "key": "X-Content-Type-Options", "value": "nosniff" },
+        { "key": "Referrer-Policy", "value": "no-referrer" }
+      ]
+    }
+  ],
   "rewrites": [
     { "source": "/building", "destination": "/pages/building/index.html" },
     { "source": "/building/", "destination": "/pages/building/index.html" },
@@ -47,6 +69,8 @@
     { "source": "/makerspace", "destination": "/pages/makerspace/index.html" },
     { "source": "/makerspace/", "destination": "/pages/makerspace/index.html" },
     { "source": "/payment-complete", "destination": "/pages/payment-complete/index.html" },
-    { "source": "/payment-complete/", "destination": "/pages/payment-complete/index.html" }
+    { "source": "/payment-complete/", "destination": "/pages/payment-complete/index.html" },
+    { "source": "/studio", "destination": "/pages/studio/index.html" },
+    { "source": "/studio/", "destination": "/pages/studio/index.html" }
   ]
 }

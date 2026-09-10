@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studio orders — Makerspace</title>
+    <meta name="description" content="Private Makerspace order administration.">
+    <meta name="robots" content="noindex, nofollow, noarchive">
+    <meta name="referrer" content="no-referrer">
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="/app/styles/style.css">
+    <link rel="stylesheet" href="/app/styles/studio.css">
+</head>
+
+<body class="studio-page">
+    <noscript>
+        <style>body { opacity: 1 }</style>
+        <p class="studio-noscript">Studio needs JavaScript to securely load orders.</p>
+    </noscript>
+
+    <header class="studio-header">
+        <a class="studio-brand" href="/" aria-label="Makerspace home">Makerspace</a>
+        <p>Studio <span>Private</span></p>
+        <div class="studio-account" id="studio-account" hidden>
+            <span id="studio-account-email"></span>
+            <button type="button" id="studio-logout">Log out</button>
+        </div>
+    </header>
+
+    <main class="studio-main">
+        <section class="studio-auth" id="studio-auth" aria-labelledby="studio-auth-title">
+            <div class="studio-auth-intro">
+                <p class="studio-eyebrow">Private workspace</p>
+                <h1 id="studio-auth-title">Orders,<br>quietly organised.</h1>
+                <p>Sign in with an approved email. We’ll send a six-digit code—no password needed.</p>
+            </div>
+
+            <div class="studio-auth-card">
+                <form id="studio-email-form">
+                    <label for="studio-email">Email address</label>
+                    <input id="studio-email" name="email" type="email" autocomplete="email" required
+                        placeholder="you@example.com">
+                    <button class="studio-primary-button" type="submit">Send login code</button>
+                </form>
+
+                <form id="studio-code-form" hidden>
+                    <p class="studio-code-sent">Enter the code sent to <strong id="studio-code-email"></strong>.</p>
+                    <label for="studio-code">Six-digit code</label>
+                    <input id="studio-code" name="token" type="text" inputmode="numeric" autocomplete="one-time-code"
+                        pattern="[0-9]{6}" maxlength="6" required placeholder="000000">
+                    <button class="studio-primary-button" type="submit">Open Studio</button>
+                    <div class="studio-auth-secondary">
+                        <button type="button" id="studio-change-email">Change email</button>
+                        <button type="button" id="studio-resend" disabled>Resend in 60s</button>
+                    </div>
+                </form>
+
+                <p class="studio-auth-status" id="studio-auth-status" role="status" aria-live="polite"></p>
+            </div>
+        </section>
+
+        <section class="studio-dashboard" id="studio-dashboard" aria-labelledby="studio-orders-title" hidden>
+            <div class="studio-dashboard-heading">
+                <div>
+                    <p class="studio-eyebrow">Workshop administration</p>
+                    <h1 id="studio-orders-title">Orders</h1>
+                </div>
+                <p class="studio-order-count" id="studio-order-count" aria-live="polite">Loading orders…</p>
+            </div>
+
+            <div class="studio-toolbar">
+                <div class="studio-search-wrap">
+                    <label class="visually-hidden" for="studio-search">Search orders</label>
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <circle cx="11" cy="11" r="6.5"></circle>
+                        <path d="m16 16 4 4"></path>
+                    </svg>
+                    <input id="studio-search" type="search" autocomplete="off"
+                        placeholder="Search name, email, reference or date">
+                </div>
+                <label class="studio-filter">
+                    <span>Status</span>
+                    <select id="studio-status-filter">
+                        <option value="all">All statuses</option>
+                        <option value="paid">Paid</option>
+                        <option value="pending">Pending</option>
+                        <option value="expired">Expired</option>
+                        <option value="failed">Failed</option>
+                        <option value="cancelled">Cancelled</option>
+                    </select>
+                </label>
+                <label class="studio-filter">
+                    <span>Mode</span>
+                    <select id="studio-environment-filter">
+                        <option value="all">Live &amp; test</option>
+                        <option value="live">Live only</option>
+                        <option value="test">Test only</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="studio-list-frame" id="studio-list-frame" aria-busy="true">
+                <table class="studio-orders-table">
+                    <thead>
+                        <tr>
+                            <th scope="col">Customer</th>
+                            <th scope="col">Session</th>
+                            <th scope="col">Total</th>
+                            <th scope="col">Status</th>
+                            <th scope="col">Ordered</th>
+                            <th scope="col"><span class="visually-hidden">Open</span></th>
+                        </tr>
+                    </thead>
+                    <tbody id="studio-orders-body"></tbody>
+                </table>
+                <div class="studio-list-state" id="studio-list-state" role="status" aria-live="polite">
+                    Loading orders…
+                </div>
+            </div>
+
+            <button class="studio-load-more" id="studio-load-more" type="button" hidden>Load more orders</button>
+        </section>
+    </main>
+
+    <div class="studio-panel-layer" id="studio-panel-layer" hidden>
+        <button class="studio-panel-backdrop" type="button" data-close-order aria-label="Close order details"></button>
+        <aside class="studio-order-panel" id="studio-order-panel" role="dialog" aria-modal="true"
+            aria-labelledby="studio-order-title" tabindex="-1">
+            <header class="studio-panel-header">
+                <div>
+                    <p class="studio-eyebrow">Order detail</p>
+                    <h2 id="studio-order-title">Loading…</h2>
+                </div>
+                <button class="studio-panel-close" type="button" data-close-order aria-label="Close order details">
+                    <span></span><span></span>
+                </button>
+            </header>
+
+            <div class="studio-panel-status" id="studio-panel-status" role="status" aria-live="polite"></div>
+            <div class="studio-panel-content" id="studio-panel-content" hidden>
+                <div class="studio-panel-summary">
+                    <p data-detail="amount">—</p>
+                    <span class="studio-status" data-detail="state">—</span>
+                </div>
+
+                <section class="studio-detail-section" aria-labelledby="studio-customer-heading">
+                    <h3 id="studio-customer-heading">Customer</h3>
+                    <dl>
+                        <div><dt>Name</dt><dd data-detail="customerName">—</dd></div>
+                        <div><dt>Email</dt><dd data-detail="customerEmail">—</dd></div>
+                    </dl>
+                </section>
+
+                <section class="studio-detail-section" aria-labelledby="studio-booking-heading">
+                    <h3 id="studio-booking-heading">Booking</h3>
+                    <dl>
+                        <div><dt>Workshop</dt><dd data-detail="workshop">—</dd></div>
+                        <div><dt>Session</dt><dd data-detail="session">—</dd></div>
+                        <div><dt>Quantity</dt><dd data-detail="quantity">—</dd></div>
+                        <div><dt>Booking status</dt><dd data-detail="bookingStatus">—</dd></div>
+                        <div><dt>Booking ID</dt><dd class="studio-mono" data-detail="id">—</dd></div>
+                        <div><dt>Ordered</dt><dd data-detail="createdAt">—</dd></div>
+                        <div><dt>Hold expires</dt><dd data-detail="expiresAt">—</dd></div>
+                    </dl>
+                </section>
+
+                <section class="studio-detail-section" aria-labelledby="studio-payment-heading">
+                    <h3 id="studio-payment-heading">Payment</h3>
+                    <dl>
+                        <div><dt>Payment status</dt><dd data-detail="paymentStatus">—</dd></div>
+                        <div><dt>Provider status</dt><dd data-detail="providerStatus">—</dd></div>
+                        <div><dt>Environment</dt><dd data-detail="environment">—</dd></div>
+                        <div><dt>Reference</dt><dd class="studio-mono" data-detail="reference">—</dd></div>
+                        <div><dt>Transaction ID</dt><dd class="studio-mono" data-detail="providerTransactionId">—</dd></div>
+                        <div><dt>Paid</dt><dd data-detail="paidAt">—</dd></div>
+                        <div><dt>Verified</dt><dd data-detail="verifiedAt">—</dd></div>
+                    </dl>
+                </section>
+
+                <div class="studio-panel-actions">
+                    <a class="studio-paystack-link" id="studio-paystack-link" href="https://dashboard.paystack.com/#/transactions"
+                        target="_blank" rel="noopener noreferrer">View in Paystack <span aria-hidden="true">↗</span></a>
+                    <button type="button" id="studio-copy-reference">Copy payment reference</button>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <script src="/app/scripts/page-transitions.js"></script>
+    <script src="/app/scripts/studio.js"></script>
+</body>
+
+</html>
