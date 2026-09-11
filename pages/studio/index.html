@@ -20,7 +20,12 @@
     </noscript>
 
     <header class="studio-header">
-        <a class="studio-brand" href="/" aria-label="Makerspace home">Makerspace</a>
+        <div class="studio-header-home">
+            <button class="studio-header-back" type="button" data-close-order aria-label="Back to all orders">
+                <span aria-hidden="true">‹</span>
+            </button>
+            <a class="studio-brand" href="/" aria-label="Makerspace home">Makerspace</a>
+        </div>
         <div class="studio-account" id="studio-account" hidden>
             <span id="studio-account-email"></span>
             <button type="button" id="studio-logout">Log out</button>
@@ -66,10 +71,7 @@
                             <p class="studio-eyebrow">Workshop</p>
                             <h1 id="studio-orders-title">Orders</h1>
                         </div>
-                        <div class="studio-list-heading-meta">
-                            <p class="studio-order-count" id="studio-order-count" aria-live="polite">Loading orders…</p>
-                            <button class="studio-view-all" type="button" data-close-order>All orders</button>
-                        </div>
+                        <p class="studio-order-count" id="studio-order-count" aria-live="polite">Loading orders…</p>
                     </div>
 
                     <div class="studio-toolbar">
@@ -154,14 +156,13 @@
                                 <section aria-labelledby="studio-attendance-heading">
                                     <h3 id="studio-attendance-heading">Booking</h3>
                                     <p class="studio-detail-primary" data-detail="quantity">—</p>
-                                    <p data-detail="bookingStatus">—</p>
                                 </section>
                             </div>
 
                             <section class="studio-payment-strip" aria-labelledby="studio-payment-heading">
                                 <div>
                                     <h3 id="studio-payment-heading">Payment</h3>
-                                    <p><span data-detail="paymentStatus">—</span> · <span data-detail="environment">—</span></p>
+                                    <p data-detail="provider">—</p>
                                 </div>
                                 <p class="studio-payment-amount" data-detail="amount">—</p>
                             </section>
@@ -174,6 +175,7 @@
 
                             <dl class="studio-order-meta">
                                 <div><dt>Reference</dt><dd class="studio-mono" data-detail="reference">—</dd></div>
+                                <div><dt>Environment</dt><dd data-detail="environment">—</dd></div>
                                 <div><dt>Ordered</dt><dd data-detail="createdAt">—</dd></div>
                                 <div><dt>Booking ID</dt><dd class="studio-mono" data-detail="id">—</dd></div>
                                 <div><dt>Hold ends</dt><dd data-detail="expiresAt">—</dd></div>

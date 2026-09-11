@@ -68,6 +68,30 @@
     background: var(--studio-white);
 }
 
+.studio-header-home {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+}
+
+.studio-header-back {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 1.25rem;
+    height: 1.5rem;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--studio-ink);
+}
+
+.studio-header-back span {
+    font-size: 1.45rem;
+    font-weight: 300;
+    line-height: 1;
+}
+
 .studio-brand {
     width: max-content;
     color: inherit;
@@ -102,8 +126,7 @@
 .studio-account button,
 .studio-auth-secondary button,
 .studio-panel-actions button,
-.studio-panel-close,
-.studio-view-all {
+.studio-panel-close {
     padding: 0;
     border: 0;
     background: transparent;
@@ -114,10 +137,17 @@
     text-transform: uppercase;
 }
 
-.studio-account button,
 .studio-auth-secondary button,
 .studio-panel-actions button {
     border-bottom: 1px solid currentColor;
+}
+
+.studio-account button {
+    border-bottom: 0;
+    font-size: 0.7rem;
+    font-weight: 400;
+    letter-spacing: normal;
+    text-transform: none;
 }
 
 .studio-main {
@@ -293,21 +323,10 @@
     line-height: 0.94;
 }
 
-.studio-list-heading-meta {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    padding-bottom: 0.2rem;
-}
-
 .studio-order-count {
     color: var(--studio-muted);
     font-size: 0.75rem;
     font-variant-numeric: tabular-nums;
-}
-
-.studio-view-all {
-    display: none;
 }
 
 .studio-toolbar {
@@ -477,15 +496,6 @@
 .studio-status[data-state="cancelled"] {
     border-color: var(--studio-soft);
     background: var(--studio-soft);
-}
-
-.studio-order-mode {
-    display: block;
-    margin-top: 0.35rem;
-    color: var(--studio-muted);
-    font-size: 0.58rem;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
 }
 
 .studio-order-compact {
@@ -779,24 +789,15 @@ body.studio-panel-open .studio-list-pane {
 }
 
 body.studio-panel-open .studio-dashboard-heading {
-    min-height: 4.15rem;
-    padding-bottom: 1.1rem;
+    display: none;
 }
 
-body.studio-panel-open .studio-dashboard-heading .studio-eyebrow,
-body.studio-panel-open .studio-order-count,
 body.studio-panel-open .studio-filter {
     display: none;
 }
 
-body.studio-panel-open .studio-dashboard-heading h1 {
-    margin: 0;
-    font-size: 1.875rem;
-    letter-spacing: -0.035em;
-}
-
-body.studio-panel-open .studio-view-all {
-    display: block;
+body.studio-panel-open .studio-header-back {
+    display: inline-flex;
 }
 
 body.studio-panel-open .studio-toolbar {

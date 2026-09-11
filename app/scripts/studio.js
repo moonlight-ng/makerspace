@@ -227,10 +227,7 @@
         badge.className = 'studio-status';
         badge.dataset.state = order.state;
         badge.textContent = titleCase(order.state);
-        const mode = document.createElement('span');
-        mode.className = 'studio-order-mode';
-        mode.textContent = order.environment;
-        state.append(badge, mode);
+        state.append(badge);
 
         const ordered = createCell('studio-order-date');
         const time = document.createElement('time');
@@ -335,11 +332,10 @@
         detail('workshop', order.workshop);
         detail('session', formatSession(order.sessionDate, order.sessionPeriod));
         detail('quantity', `${order.quantity} ${Number(order.quantity) === 1 ? 'seat' : 'seats'}`);
-        detail('bookingStatus', titleCase(order.bookingStatus));
         detail('id', order.id);
         detail('createdAt', formatDate(order.createdAt));
         detail('expiresAt', formatDate(order.expiresAt));
-        detail('paymentStatus', titleCase(order.paymentStatus));
+        detail('provider', titleCase(order.provider));
         detail('environment', titleCase(order.environment));
         detail('reference', order.reference);
 

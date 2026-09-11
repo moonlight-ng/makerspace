@@ -110,6 +110,15 @@ test('Supabase uses the OTP email body for first-time and returning Studio users
     assert.doesNotMatch(template, /{{ \.ConfirmationURL }}/);
 });
 
+test('Studio shows one derived order status and labels environment separately', async () => {
+    const html = await readFile(new URL('../pages/studio/index.html', import.meta.url), 'utf8');
+    const script = await readFile(new URL('../app/scripts/studio.js', import.meta.url), 'utf8');
+
+    assert.doesNotMatch(html, /data-detail="(?:bookingStatus|paymentStatus)"/);
+    assert.doesNotMatch(script, /studio-order-mode/);
+    assert.match(html, /<dt>Environment<\/dt><dd data-detail="environment">/);
+});
+
 test('Studio sessions reject tampering, expiry, and removed allowlist entries', () => {
     const token = createStudioSession('makerspace@16by16.co', STUDIO_ENV, NOW);
     assert.deepEqual(verifyStudioSession(token, STUDIO_ENV, NOW), {
@@ -269,9 +278,12 @@ test('Studio uses the minimal neutral master-detail order design', async () => {
 
     assert.match(html, /class="studio-workspace"/);
     assert.match(html, /class="studio-detail-facts"/);
+    assert.match(html, /class="studio-header-back"[^>]*data-close-order/);
+    assert.doesNotMatch(html, /studio-view-all/);
     assert.match(html, /<title>Studio - Makerspace<\/title>/);
     assert.doesNotMatch(html, /<svg/);
     assert.match(css, /--studio-soft:\s*#efeee9/i);
     assert.match(css, /\.studio-order-row\.is-selected[\s\S]*?background:\s*var\(--studio-soft\)/);
+    assert.match(css, /\.studio-account button\s*\{[\s\S]*?border-bottom:\s*0/);
     assert.match(script, /\/api\/studio\/orders/);
 });
