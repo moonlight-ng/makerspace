@@ -110,12 +110,16 @@ test('Supabase uses the OTP email body for first-time and returning Studio users
     assert.doesNotMatch(template, /{{ \.ConfirmationURL }}/);
 });
 
-test('Studio shows one derived order status and labels environment separately', async () => {
+test('Studio shows one text-free derived status indicator and labels environment separately', async () => {
     const html = await readFile(new URL('../pages/studio/index.html', import.meta.url), 'utf8');
     const script = await readFile(new URL('../app/scripts/studio.js', import.meta.url), 'utf8');
 
     assert.doesNotMatch(html, /data-detail="(?:bookingStatus|paymentStatus)"/);
     assert.doesNotMatch(script, /studio-order-mode/);
+    assert.doesNotMatch(html, /data-detail="state"[^>]*>[^<]+</);
+    assert.match(script, /element\.title = label/);
+    assert.match(script, /element\.setAttribute\('aria-label', `Status: \$\{label\}`\)/);
+    assert.doesNotMatch(script, /(?:badge|compactState|state)\.textContent = titleCase\(order\.state\)/);
     assert.match(html, /<dt>Environment<\/dt><dd data-detail="environment">/);
 });
 
@@ -280,6 +284,9 @@ test('Studio uses the minimal neutral master-detail order design', async () => {
     assert.match(html, /class="studio-detail-facts"/);
     assert.match(html, /class="studio-header-back"[^>]*data-close-order/);
     assert.doesNotMatch(html, /studio-view-all/);
+    assert.doesNotMatch(html, /<p class="studio-eyebrow">Workshop<\/p>/);
+    assert.match(html, /<option value="paid" selected>Paid<\/option>/);
+    assert.match(html, /<option value="live" selected>Live only<\/option>/);
     assert.match(html, /<title>Studio - Makerspace<\/title>/);
     assert.doesNotMatch(html, /<svg/);
     assert.match(css, /--studio-soft:\s*#efeee9/i);

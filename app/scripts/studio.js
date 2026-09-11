@@ -174,6 +174,22 @@
         return cell;
     }
 
+    function setStatusIndicator(element, status) {
+        const value = String(status || 'pending').toLowerCase();
+        const label = titleCase(value);
+        element.className = 'studio-status';
+        element.dataset.state = value;
+        element.title = label;
+        element.setAttribute('role', 'img');
+        element.setAttribute('aria-label', `Status: ${label}`);
+        element.textContent = '';
+        return element;
+    }
+
+    function createStatusIndicator(status) {
+        return setStatusIndicator(document.createElement('span'), status);
+    }
+
     function orderRow(order) {
         const row = document.createElement('tr');
         row.className = 'studio-order-row';
@@ -197,8 +213,7 @@
         compactTop.className = 'studio-order-compact-top';
         const compactId = document.createElement('span');
         compactId.textContent = shortOrderId(order);
-        const compactState = document.createElement('span');
-        compactState.textContent = titleCase(order.state);
+        const compactState = createStatusIndicator(order.state);
         compactTop.append(compactId, compactState);
         const compactWorkshop = document.createElement('strong');
         compactWorkshop.textContent = order.workshop;
@@ -223,10 +238,7 @@
         amount.textContent = formatAmount(order.amount, order.currency);
 
         const state = createCell('studio-order-state');
-        const badge = document.createElement('span');
-        badge.className = 'studio-status';
-        badge.dataset.state = order.state;
-        badge.textContent = titleCase(order.state);
+        const badge = createStatusIndicator(order.state);
         state.append(badge);
 
         const ordered = createCell('studio-order-date');
@@ -325,8 +337,7 @@
         panelSubtitle.textContent = `${order.workshop} · ${formatSession(order.sessionDate, order.sessionPeriod)}`;
         detail('amount', formatAmount(order.amount, order.currency));
         const state = panel.querySelector('[data-detail="state"]');
-        state.textContent = titleCase(order.state);
-        state.dataset.state = order.state;
+        setStatusIndicator(state, order.state);
         detail('customerName', order.customerName);
         detail('customerEmail', order.customerEmail);
         detail('workshop', order.workshop);

@@ -68,7 +68,6 @@
                 <section class="studio-list-pane" aria-label="Workshop orders">
                     <div class="studio-dashboard-heading">
                         <div>
-                            <p class="studio-eyebrow">Workshop</p>
                             <h1 id="studio-orders-title">Orders</h1>
                         </div>
                         <p class="studio-order-count" id="studio-order-count" aria-live="polite">Loading orders…</p>
@@ -84,7 +83,7 @@
                             <span class="visually-hidden">Status</span>
                             <select id="studio-status-filter" aria-label="Filter by status">
                                 <option value="all">All statuses</option>
-                                <option value="paid">Paid</option>
+                                <option value="paid" selected>Paid</option>
                                 <option value="pending">Pending</option>
                                 <option value="expired">Expired</option>
                                 <option value="failed">Failed</option>
@@ -95,7 +94,7 @@
                             <span class="visually-hidden">Mode</span>
                             <select id="studio-environment-filter" aria-label="Filter by environment">
                                 <option value="all">Live &amp; test</option>
-                                <option value="live">Live only</option>
+                                <option value="live" selected>Live only</option>
                                 <option value="test">Test only</option>
                             </select>
                         </label>
@@ -131,7 +130,8 @@
                             <div class="studio-panel-heading">
                                 <div class="studio-panel-title-row">
                                     <h2 id="studio-order-title">Loading…</h2>
-                                    <span class="studio-status" data-detail="state">—</span>
+                                    <span class="studio-status" data-detail="state" role="img"
+                                        aria-label="Order status"></span>
                                 </div>
                                 <p id="studio-order-subtitle">Loading order details…</p>
                             </div>

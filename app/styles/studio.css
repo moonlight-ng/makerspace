@@ -467,34 +467,37 @@
 }
 
 .studio-status {
-    display: inline-flex;
-    align-items: center;
-    width: max-content;
-    min-height: 1.5rem;
-    padding: 0.25rem 0.55rem;
-    border: 1px solid var(--studio-rule-strong);
+    display: inline-block;
+    width: 0.625rem;
+    height: 0.625rem;
+    min-height: 0;
+    flex: 0 0 auto;
+    padding: 0;
+    border: 1px solid var(--studio-ink);
+    border-radius: 50%;
     background: transparent;
-    color: var(--studio-muted);
-    font-size: 0.56rem;
-    font-weight: 500;
-    letter-spacing: 0.08em;
-    line-height: 1;
-    text-transform: uppercase;
-}
-
-.studio-page .studio-status {
-    font-weight: 500;
+    cursor: help;
 }
 
 .studio-status[data-state="paid"] {
     border-color: var(--studio-ink);
     background: var(--studio-ink);
-    color: var(--studio-white);
 }
 
-.studio-status[data-state="expired"],
+.studio-status[data-state="expired"] {
+    border-color: var(--studio-rule-strong);
+    background: var(--studio-rule-strong);
+}
+
+.studio-status[data-state="failed"] {
+    border-radius: 0;
+    background: var(--studio-ink);
+    transform: rotate(45deg);
+}
+
 .studio-status[data-state="cancelled"] {
-    border-color: var(--studio-soft);
+    border-color: var(--studio-rule-strong);
+    border-radius: 0;
     background: var(--studio-soft);
 }
 
@@ -871,11 +874,8 @@ body.studio-panel-open .studio-order-compact {
     letter-spacing: 0.04em;
 }
 
-.studio-order-compact-top span:last-child {
-    color: var(--studio-muted);
-    font-size: 0.56rem;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
+.studio-order-compact-top .studio-status {
+    margin-right: 0.125rem;
 }
 
 .studio-order-compact > strong {
