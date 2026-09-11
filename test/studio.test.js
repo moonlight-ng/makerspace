@@ -269,6 +269,7 @@ test('Studio uses the minimal neutral master-detail order design', async () => {
 
     assert.match(html, /class="studio-workspace"/);
     assert.match(html, /class="studio-detail-facts"/);
+    assert.match(html, /<title>Studio - Makerspace<\/title>/);
     assert.doesNotMatch(html, /<svg/);
     assert.match(css, /--studio-soft:\s*#efeee9/i);
     assert.match(css, /\.studio-order-row\.is-selected[\s\S]*?background:\s*var\(--studio-soft\)/);
