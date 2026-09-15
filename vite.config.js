@@ -11,9 +11,13 @@ import studioSessionHandler from './api/studio/session.js'
 import {
     EVENTS,
     getEvent,
+    getWorkshop,
+    isEventUpcoming,
     MAKERSPACE_SUBACCOUNT_CODE,
     WORKSHOP,
+    WORKSHOPS,
 } from './server/config.js'
+import { validateBooking } from './server/bookings.js'
 
 const bookingApiPlugin = () => {
     const bookings = []
@@ -46,7 +50,7 @@ const bookingApiPlugin = () => {
                 const url = new URL(req.url, 'http://localhost')
 
                 if (url.pathname === '/api/availability' && req.method === 'GET') {
-                    const events = EVENTS.map((event) => {
+                    const events = EVENTS.filter((event) => isEventUpcoming(event)).map((event) => {
                         const reserved = bookings
                             .filter((booking) => (
                                 booking.eventSlug === event.slug
@@ -55,26 +59,23 @@ const bookingApiPlugin = () => {
                             .reduce((total, booking) => total + booking.quantity, 0)
                         return {
                             ...event,
-                            title: WORKSHOP.name,
+                            title: getWorkshop(event.classSlug).name,
                             currency: 'NGN',
                             reserved,
                             remaining: Math.max(0, event.capacity - reserved),
                         }
                     })
 
-                    return sendJson(res, 200, { workshop: WORKSHOP, events })
+                    return sendJson(res, 200, { workshop: WORKSHOP, workshops: WORKSHOPS, events })
                 }
 
                 if (url.pathname === '/api/bookings' && req.method === 'POST') {
                     try {
                         const input = await readBody(req)
-                        const event = getEvent(input.eventSlug)
-                        if (!event) return sendJson(res, 400, { error: 'Choose a valid event.' })
-
-                        const quantity = Number(input.quantity || 1)
-                        if (!Number.isInteger(quantity) || quantity < 1 || quantity > event.capacity) {
-                            return sendJson(res, 400, { error: `Choose between 1 and ${event.capacity} places.` })
-                        }
+                        const validated = validateBooking(input)
+                        if (validated.error) return sendJson(res, 400, { error: validated.error })
+                        const event = getEvent(validated.eventSlug)
+                        const quantity = validated.quantity
 
                         const reserved = bookings
                             .filter((booking) => (
@@ -90,7 +91,7 @@ const bookingApiPlugin = () => {
                         const bookingId = randomUUID()
                         const reference = `local-${Date.now().toString(36)}-${bookingId.replaceAll('-', '').slice(0, 8)}`
                         bookings.push({
-                            ...input,
+                            ...validated,
                             date: event.date,
                             period: event.period,
                             quantity,
@@ -168,8 +169,8 @@ const bookingApiPlugin = () => {
                         ...payment,
                         email: booking.email.toLowerCase(),
                         customerName: booking.name,
-                        workshop: WORKSHOP.name,
-                        classSlug: WORKSHOP.slug,
+                        workshop: getWorkshop(booking.classSlug).name,
+                        classSlug: booking.classSlug,
                         eventSlug: booking.eventSlug,
                         sessionDate: booking.date,
                         sessionPeriod: booking.period,

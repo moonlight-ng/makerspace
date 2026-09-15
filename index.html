@@ -189,32 +189,68 @@
         </section>
 
         <section class="making-introduction current-workshop" id="workshop" aria-labelledby="current-workshop-heading">
-            <h2 class="making-introduction-title" id="current-workshop-heading">Book a workshop</h2>
+            <h2 class="making-introduction-title" id="current-workshop-heading">Book a workshop.</h2>
             <div>
-                <p class="making-label current-workshop-kicker">Intro to 3D Printing</p>
-                <p>Learn how a digital model becomes a physical object. This beginner session covers preparing a file, understanding the machine and producing a first print.</p>
-                <dl class="current-workshop-details">
-                    <div><dt>Level</dt><dd>Beginner</dd></div>
-                    <div><dt>Duration</dt><dd>3 hours</dd></div>
-                    <div><dt>Price</dt><dd>₦30,000</dd></div>
-                </dl>
-                <button class="current-workshop-booking-toggle" id="booking-toggle" type="button" aria-expanded="false" aria-controls="booking-panel">Book a session</button>
+                <div class="workshop-options">
+                    <article class="workshop-option" id="workshop-3d-printing" aria-labelledby="printing-workshop-heading">
+                        <header class="workshop-option-header">
+                            <p class="workshop-option-category">01 / Fabrication</p>
+                            <h3 class="current-workshop-kicker" id="printing-workshop-heading">3D Printing</h3>
+                        </header>
+                        <p>From screen to something you can hold. Learn the basics of 3D printing and start your first print with guidance.</p>
+                        <div class="workshop-option-activities">
+                            <h4>What you’ll try</h4>
+                            <ul class="workshop-option-outcomes">
+                                <li>Prepare a digital model.</li>
+                                <li>Explore the printer and materials.</li>
+                                <li>Start your first print.</li>
+                            </ul>
+                        </div>
+                        <dl class="current-workshop-details">
+                            <div><dt>Level</dt><dd>Beginner</dd></div>
+                            <div><dt>Duration</dt><dd>3 hours</dd></div>
+                            <div><dt>Price</dt><dd>₦30,000</dd></div>
+                        </dl>
+                        <button class="current-workshop-booking-toggle" id="booking-toggle" data-workshop="introduction-to-3d-printing" data-workshop-name="3D printing" type="button" aria-expanded="false" aria-controls="booking-panel">
+                            <span>Book 3D printing</span>
+                            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10H17M11 4L17 10L11 16" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+                        </button>
+                        <p class="workshop-option-note">Thursday evenings and Saturday mornings.</p>
+                    </article>
+                    <article class="workshop-option" id="workshop-clay" aria-labelledby="clay-workshop-heading">
+                        <header class="workshop-option-header">
+                            <p class="workshop-option-category">02 / Casting</p>
+                            <h3 class="current-workshop-kicker" id="clay-workshop-heading">Clay</h3>
+                        </header>
+                        <p>Get your hands into clay. Join Kabir at the pottery wheel and practise shaping a form of your own.</p>
+                        <div class="workshop-option-activities">
+                            <h4>What you’ll try</h4>
+                            <ul class="workshop-option-outcomes">
+                                <li>Get to know the pottery wheel.</li>
+                                <li>Practise centring the clay.</li>
+                                <li>Open and shape a form.</li>
+                            </ul>
+                        </div>
+                        <dl class="current-workshop-details">
+                            <div><dt>Level</dt><dd>Beginner</dd></div>
+                            <div><dt>Duration</dt><dd>3 hours</dd></div>
+                            <div><dt>Price</dt><dd>₦30,000</dd></div>
+                        </dl>
+                        <button class="current-workshop-booking-toggle current-workshop-booking-toggle--clay" id="clay-booking-toggle" data-workshop="introduction-to-clay" data-workshop-name="clay" type="button" aria-expanded="false" aria-controls="booking-panel">
+                            <span>Book clay</span>
+                            <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 10H17M11 4L17 10L11 16" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+                        </button>
+                        <p class="workshop-option-note">Thursday evenings and Saturday mornings.</p>
+                    </article>
+                </div>
 
                 <div class="current-workshop-booking" id="booking-panel" hidden>
-                    <p class="current-workshop-booking-intro">Thursday evening and Saturday morning sessions begin in September. Select an available session to book.</p>
+                    <h3 class="workshop-booking-heading" id="booking-workshop-title">Book your 3D printing session</h3>
+                    <p class="current-workshop-booking-intro">Choose an available session below.</p>
                     <form class="booking-form" id="booking-form">
                 <fieldset>
                     <legend>Available sessions</legend>
-                    <div class="booking-choice-grid booking-choice-grid--dates">
-                        <label hidden><input type="radio" name="event" value="intro-to-3d-printing-2026-09-03" data-date="2026-09-03" data-period="evening" data-capacity="1" data-price="30000" required disabled><span><span class="booking-date-head"><span><small>Thu</small>03 Sep</span><small class="booking-date-time">4 - 7pm</small></span></span></label>
-                        <label hidden><input type="radio" name="event" value="intro-to-3d-printing-2026-09-05" data-date="2026-09-05" data-period="morning" data-capacity="1" data-price="30000" required disabled><span><span class="booking-date-head"><span><small>Sat</small>05 Sep</span><small class="booking-date-time">11am - 2pm</small></span></span></label>
-                        <label hidden><input type="radio" name="event" value="intro-to-3d-printing-2026-09-10" data-date="2026-09-10" data-period="evening" data-capacity="1" data-price="30000" required disabled><span><span class="booking-date-head"><span><small>Thu</small>10 Sep</span><small class="booking-date-time">4 - 7pm</small></span></span></label>
-                        <label hidden><input type="radio" name="event" value="intro-to-3d-printing-2026-09-12" data-date="2026-09-12" data-period="morning" data-capacity="1" data-price="30000" required disabled><span><span class="booking-date-head"><span><small>Sat</small>12 Sep</span><small class="booking-date-time">11am - 2pm</small></span></span></label>
-                        <label hidden><input type="radio" name="event" value="intro-to-3d-printing-2026-09-17" data-date="2026-09-17" data-period="evening" data-capacity="1" data-price="30000" required disabled><span><span class="booking-date-head"><span><small>Thu</small>17 Sep</span><small class="booking-date-time">4 - 7pm</small></span></span></label>
-                        <label hidden><input type="radio" name="event" value="intro-to-3d-printing-2026-09-19" data-date="2026-09-19" data-period="morning" data-capacity="1" data-price="30000" required disabled><span><span class="booking-date-head"><span><small>Sat</small>19 Sep</span><small class="booking-date-time">11am - 2pm</small></span></span></label>
-                        <label hidden><input type="radio" name="event" value="intro-to-3d-printing-2026-09-24" data-date="2026-09-24" data-period="evening" data-capacity="1" data-price="30000" required disabled><span><span class="booking-date-head"><span><small>Thu</small>24 Sep</span><small class="booking-date-time">4 - 7pm</small></span></span></label>
-                        <label hidden><input type="radio" name="event" value="intro-to-3d-printing-2026-09-26" data-date="2026-09-26" data-period="morning" data-capacity="1" data-price="30000" required disabled><span><span class="booking-date-head"><span><small>Sat</small>26 Sep</span><small class="booking-date-time">11am - 2pm</small></span></span></label>
-                    </div>
+                    <div class="booking-choice-grid booking-choice-grid--dates"></div>
                 </fieldset>
 
                 <fieldset>

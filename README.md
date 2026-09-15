@@ -17,9 +17,9 @@ npm run build
 
 ## Events
 
-The current bookable workshop and its dated events live in `server/config.js`. Each event has its own slug, date, period, capacity and amount, so adding a future workshop or event does not require creating a Paystack product.
+The bookable workshops and their dated events live in `server/config.js`. Each event has its own slug, workshop slug (`classSlug`), date, period, capacity and amount, so adding a future workshop or event does not require creating a Paystack product. The browser builds each workshop’s calendar from the availability API.
 
-Amounts are stored in kobo. The server derives the total from the selected event and never accepts a browser-supplied price. Intro to 3D Printing accepts one booking per session.
+Amounts are stored in kobo. The server derives the workshop and total from the selected event and never accepts a browser-supplied price. Intro to 3D Printing and Intro to Clay each accept one booking per session, cost ₦30,000, and run for three hours on Thursday evenings and Saturday mornings. Availability and booking validation exclude sessions that have started, using Lagos time.
 
 ## Payments
 

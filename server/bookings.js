@@ -3,15 +3,18 @@ import { randomUUID } from 'node:crypto';
 import {
     EVENTS,
     getEvent,
+    getWorkshop,
+    isEventUpcoming,
     MAKERSPACE_SUBACCOUNT_CODE,
     PAYMENT_CURRENCY,
     WORKSHOP,
+    WORKSHOPS,
 } from './config.js';
 import { AppError } from './errors.js';
 import { initializePaystackTransaction, requirePaystackKeys } from './paystack.js';
 import { getSupabaseClient } from './supabase.js';
 
-export function validateBooking(input = {}) {
+export function validateBooking(input = {}, now = Date.now()) {
     const eventSlug = String(input.eventSlug || '');
     const event = getEvent(eventSlug);
     const quantity = Number(input.quantity ?? 1);
@@ -19,6 +22,7 @@ export function validateBooking(input = {}) {
     const email = String(input.email || '').trim().toLowerCase();
 
     if (!event) return { error: 'Choose a valid event.' };
+    if (!isEventUpcoming(event, now)) return { error: 'That session has already started. Please choose another.' };
     if (!Number.isInteger(quantity) || quantity < 1 || quantity > event.capacity) {
         return { error: event.capacity === 1 ? 'This session accepts one booking.' : `Choose between 1 and ${event.capacity} bookings.` };
     }
@@ -29,7 +33,7 @@ export function validateBooking(input = {}) {
 
     return {
         eventSlug,
-        classSlug: WORKSHOP.slug,
+        classSlug: event.classSlug,
         date: event.date,
         period: event.period,
         quantity,
@@ -57,7 +61,7 @@ function createReference(bookingId) {
     return `mksp-${Date.now().toString(36)}-${suffix}`;
 }
 
-export async function getAvailability(env = process.env, supabase = getSupabaseClient(env)) {
+export async function getAvailability(env = process.env, supabase = getSupabaseClient(env), now = Date.now()) {
     const { data, error } = await supabase
         .from('makerspace_bookings')
         .select('event_slug,quantity,status,expires_at')
@@ -69,7 +73,7 @@ export async function getAvailability(env = process.env, supabase = getSupabaseC
 
     const reservedByEvent = new Map();
     for (const booking of data || []) {
-        if (booking.status === 'reserved' && Date.parse(booking.expires_at) <= Date.now()) continue;
+        if (booking.status === 'reserved' && Date.parse(booking.expires_at) <= now) continue;
         if (!booking.event_slug) continue;
         reservedByEvent.set(
             booking.event_slug,
@@ -77,18 +81,18 @@ export async function getAvailability(env = process.env, supabase = getSupabaseC
         );
     }
 
-    const events = EVENTS.map((event) => {
+    const events = EVENTS.filter((event) => isEventUpcoming(event, now)).map((event) => {
         const reserved = reservedByEvent.get(event.slug) || 0;
         return {
             ...event,
-            title: WORKSHOP.name,
+            title: getWorkshop(event.classSlug).name,
             currency: PAYMENT_CURRENCY,
             reserved,
             remaining: Math.max(0, event.capacity - reserved),
         };
     });
 
-    return { workshop: WORKSHOP, events };
+    return { workshop: WORKSHOP, workshops: WORKSHOPS, events };
 }
 
 export async function createBooking(input, env = process.env, supabase = getSupabaseClient(env)) {
@@ -144,7 +148,7 @@ export async function createBooking(input, env = process.env, supabase = getSupa
                 session_period: booking.period,
                 quantity: booking.quantity,
                 custom_fields: [
-                    { display_name: 'Workshop', variable_name: 'workshop', value: WORKSHOP.name },
+                    { display_name: 'Workshop', variable_name: 'workshop', value: getWorkshop(booking.classSlug).name },
                     { display_name: 'Event', variable_name: 'event', value: booking.eventSlug },
                     { display_name: 'Session', variable_name: 'session', value: `${booking.date} · ${booking.period}` },
                     { display_name: 'Booking ID', variable_name: 'booking_id', value: bookingId },

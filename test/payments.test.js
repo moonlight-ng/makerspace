@@ -2,11 +2,13 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import {
+    CLAY_WORKSHOP,
     EVENTS,
     getEvent,
     getWorkshop,
     MAKERSPACE_SUBACCOUNT_CODE,
     WORKSHOP,
+    WORKSHOPS,
 } from '../server/config.js'
 import {
     initializePaystackTransaction,
@@ -14,7 +16,8 @@ import {
     requirePaystackKeys,
     transactionMatchesPayment,
 } from '../server/paystack.js'
-import { cancelBooking, validateBooking, validateBookingCancellation } from '../server/bookings.js'
+import { cancelBooking, createBooking, getAvailability, validateBooking, validateBookingCancellation } from '../server/bookings.js'
+import { paymentSummary } from '../server/payments.js'
 import {
     getNotionConfig,
     notionPropertiesForBooking,
@@ -33,6 +36,8 @@ const testEnv = {
     PAYSTACK_CALLBACK_URL: 'https://makerspace.example/payment-complete/',
 }
 
+const TEST_NOW = Date.parse('2026-09-01T12:00:00Z')
+
 test('Paystack secret key determines the transaction environment', () => {
     assert.deepEqual(requirePaystackKeys(testEnv), {
         secretKey: 'sk_test_example',
@@ -46,25 +51,112 @@ test('Paystack secret key determines the transaction environment', () => {
 })
 
 test('booking details are derived from the selected event', () => {
-    assert.deepEqual(validateBooking(validInput), {
+    assert.deepEqual(validateBooking(validInput, TEST_NOW), {
         ...validInput,
         classSlug: WORKSHOP.slug,
         date: '2026-09-03',
         period: 'evening',
     })
-    assert.equal(validateBooking({ ...validInput, eventSlug: 'missing-event' }).error, 'Choose a valid event.')
-    assert.equal(validateBooking({ ...validInput, quantity: 0 }).error, 'This session accepts one booking.')
-    assert.equal(validateBooking({ ...validInput, quantity: 2 }).error, 'This session accepts one booking.')
+    assert.equal(validateBooking({ ...validInput, eventSlug: 'missing-event' }, TEST_NOW).error, 'Choose a valid event.')
+    assert.equal(validateBooking({ ...validInput, quantity: 0 }, TEST_NOW).error, 'This session accepts one booking.')
+    assert.equal(validateBooking({ ...validInput, quantity: 2 }, TEST_NOW).error, 'This session accepts one booking.')
 })
 
-test('the calendar exposes one workshop across dated events', () => {
+test('the calendar exposes separate printing and clay events with the same price and schedule', () => {
     assert.equal(WORKSHOP.name, 'Intro to 3D Printing')
     assert.equal(getWorkshop(WORKSHOP.slug), WORKSHOP)
-    assert.equal(getWorkshop('introduction-to-clay'), null)
-    assert.equal(EVENTS.length, 8)
+    assert.equal(getWorkshop(CLAY_WORKSHOP.slug), CLAY_WORKSHOP)
+    assert.equal(getWorkshop('missing-workshop'), null)
+    assert.equal(WORKSHOPS.length, 2)
+    assert.equal(EVENTS.length, 16)
+    const printing = EVENTS.filter((event) => event.classSlug === WORKSHOP.slug)
+    const clay = EVENTS.filter((event) => event.classSlug === CLAY_WORKSHOP.slug)
+    assert.deepEqual(clay.map(({ date, period }) => ({ date, period })), printing.map(({ date, period }) => ({ date, period })))
+    assert.equal(new Set(EVENTS.map((event) => event.slug)).size, EVENTS.length)
     assert.equal(getEvent(validInput.eventSlug).amount, 3_000_000)
     assert.equal(new Set(EVENTS.map((event) => event.amount)).size, 1)
     assert.deepEqual(new Set(EVENTS.map((event) => event.capacity)), new Set([1]))
+})
+
+test('a Clay event determines its workshop even when the client supplies printing details', () => {
+    const booking = validateBooking({
+        ...validInput,
+        eventSlug: 'intro-to-clay-2026-09-17',
+        classSlug: WORKSHOP.slug,
+        date: '2026-09-03',
+        period: 'morning',
+        amount: 1,
+    }, TEST_NOW)
+    assert.equal(booking.classSlug, CLAY_WORKSHOP.slug)
+    assert.equal(booking.date, '2026-09-17')
+    assert.equal(booking.period, 'evening')
+    assert.equal(booking.amount, undefined)
+})
+
+test('availability counts printing and clay bookings independently and ignores expired holds', async () => {
+    const printingSlug = 'intro-to-3d-printing-2026-09-17'
+    const claySlug = 'intro-to-clay-2026-09-17'
+    const rows = [
+        { event_slug: printingSlug, quantity: 1, status: 'paid' },
+        { event_slug: claySlug, quantity: 1, status: 'reserved', expires_at: '2000-01-01T00:00:00Z' },
+    ]
+    const supabase = {
+        from() { return { select() { return { async in() { return { data: rows, error: null } } } } } },
+    }
+    const availability = await getAvailability({}, supabase, Date.parse('2026-09-15T12:00:00Z'))
+    assert.equal(availability.workshops.length, 2)
+    assert.equal(availability.events.find((event) => event.slug === printingSlug).remaining, 0)
+    const clay = availability.events.find((event) => event.slug === claySlug)
+    assert.equal(clay.remaining, 1)
+    assert.equal(clay.title, CLAY_WORKSHOP.name)
+})
+
+test('Clay reservation and payment metadata use the event workshop and server price', async (t) => {
+    t.mock.timers.enable({ apis: ['Date'], now: TEST_NOW })
+    const calls = []
+    let transaction
+    t.mock.method(globalThis, 'fetch', async (url, options) => {
+        assert.equal(url, 'https://api.paystack.co/transaction/initialize')
+        transaction = JSON.parse(options.body)
+        return {
+            ok: true,
+            async json() {
+                return { status: true, data: { access_code: 'mock-access', authorization_url: 'https://checkout.paystack.com/mock-access', reference: transaction.reference } }
+            },
+        }
+    })
+    const supabase = {
+        async rpc(name, input) {
+            calls.push({ name, input })
+            return { data: { ok: true }, error: null }
+        },
+    }
+    const result = await createBooking({ ...validInput, eventSlug: 'intro-to-clay-2026-09-17', amount: 1 }, testEnv, supabase)
+    assert.equal(calls[0].input.p_class_slug, CLAY_WORKSHOP.slug)
+    assert.equal(calls[0].input.p_event_slug, 'intro-to-clay-2026-09-17')
+    assert.equal(calls[0].input.p_amount, 3_000_000)
+    const metadata = JSON.parse(transaction.metadata)
+    assert.equal(metadata.workshop_slug, CLAY_WORKSHOP.slug)
+    assert.equal(metadata.custom_fields.find((field) => field.variable_name === 'workshop').value, CLAY_WORKSHOP.name)
+    assert.equal(result.checkout.amount, 3_000_000)
+})
+
+test('started sessions disappear from availability and cannot be reserved', async () => {
+    const now = Date.parse('2026-09-17T15:00:00Z')
+    assert.equal(validateBooking({ ...validInput, eventSlug: 'intro-to-clay-2026-09-17' }, now).error, 'That session has already started. Please choose another.')
+    assert.equal(validateBooking({ ...validInput, eventSlug: 'intro-to-clay-2026-09-19' }, now).classSlug, CLAY_WORKSHOP.slug)
+    const supabase = { from() { return { select() { return { async in() { return { data: [], error: null } } } } } } }
+    const availability = await getAvailability({}, supabase, now)
+    assert.equal(availability.events.some((event) => event.date <= '2026-09-17'), false)
+})
+
+test('Clay payment summaries and Notion orders retain the workshop name', () => {
+    assert.equal(paymentSummary({ classSlug: CLAY_WORKSHOP.slug }).workshop, CLAY_WORKSHOP.name)
+    const properties = notionPropertiesForBooking({
+        id: 'example', class_slug: CLAY_WORKSHOP.slug, session_date: '2026-09-17',
+        customer_name: 'Test Maker', quantity: 1, status: 'paid',
+    })
+    assert.equal(properties.Workshop.rich_text[0].text.content, CLAY_WORKSHOP.name)
 })
 
 test('booking cancellation requires the reservation ID and matching payment reference', () => {

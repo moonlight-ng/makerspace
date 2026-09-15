@@ -4,17 +4,18 @@
 
     const status = document.getElementById('booking-status');
     const submitButton = form.querySelector('button[type="submit"]');
-    const eventInputs = Array.from(form.querySelectorAll('input[type="radio"][name="event"]'));
+    let eventInputs = [];
     const steps = Array.from(form.querySelectorAll('fieldset'));
     const submitRow = form.querySelector('.booking-submit-row');
     const quantityOutput = document.getElementById('booking-quantity');
     const totalOutput = document.getElementById('booking-total');
     const stepButtons = Array.from(form.querySelectorAll('[data-quantity-step]'));
     const eventCatalog = new Map();
-    const bookingToggle = document.getElementById('booking-toggle');
+    const bookingToggles = Array.from(document.querySelectorAll('[data-workshop][aria-controls="booking-panel"]'));
+    const workshopCatalog = new Map();
     const bookingPanel = document.getElementById('booking-panel');
+    const bookingTitle = document.getElementById('booking-workshop-title');
     const dateGrid = form.querySelector('.booking-choice-grid--dates');
-    const dateLabels = eventInputs.map((input) => input.closest('label')).filter(Boolean);
 
     const review = document.getElementById('booking-review');
     const reviewKicker = document.getElementById('booking-review-kicker');
@@ -28,7 +29,6 @@
     const previewFlowEnabled = searchParams.get('booking-flow') === 'preview';
     const requestedPreviewHoldSeconds = Number(searchParams.get('hold-seconds'));
 
-    const WORKSHOP_NAME = 'Intro to 3D Printing';
     const DEFAULT_CAPACITY = 1;
     const DEFAULT_PRICE = 30000;
     const HOLD_DURATION_MS = 10 * 60 * 1000;
@@ -51,32 +51,41 @@
     let reviewState = 'idle';
     let paymentPreview = null;
     let availabilityLoaded = false;
+    let activeWorkshopSlug = bookingToggles[0]?.dataset.workshop || 'introduction-to-3d-printing';
 
     const formatNaira = (amount) => `₦${amount.toLocaleString('en-NG')}`;
 
-    function setBookingOpen(open) {
-        if (!bookingToggle || !bookingPanel) return;
+    function setBookingOpen(open, toggle = bookingToggles.find((button) => button.dataset.workshop === activeWorkshopSlug)) {
+        if (!toggle || !bookingPanel) return;
+        if (toggle.dataset.workshop !== activeWorkshopSlug) {
+            activeWorkshopSlug = toggle.dataset.workshop;
+            quantity = 1;
+            window.clearInterval(countdownInterval);
+            reviewState = 'idle';
+            activeReservation = null;
+            closePaymentPreview(false);
+            if (review) review.hidden = true;
+            form.hidden = false;
+            renderEventCalendar();
+        }
         bookingPanel.hidden = !open;
-        bookingToggle.setAttribute('aria-expanded', String(open));
-        bookingToggle.textContent = open ? 'Close booking' : 'Book a session';
+        bookingToggles.forEach((button) => {
+            const expanded = open && button === toggle;
+            button.setAttribute('aria-expanded', String(expanded));
+            button.querySelector('span').textContent = expanded
+                ? `Close ${button.dataset.workshopName} booking`
+                : `Book ${button.dataset.workshopName}`;
+        });
+        if (bookingTitle) bookingTitle.textContent = `Book your ${toggle.dataset.workshopName} session`;
+        updateAvailabilityStatus();
 
         if (open) {
             bookingPanel.classList.remove('is-revealed');
             void bookingPanel.offsetWidth;
             bookingPanel.classList.add('is-revealed');
+            bookingPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
     }
-
-    eventInputs.forEach((input) => {
-        eventCatalog.set(input.value, {
-            slug: input.value,
-            date: input.dataset.date,
-            period: input.dataset.period,
-            capacity: Number(input.dataset.capacity) || DEFAULT_CAPACITY,
-            amount: (Number(input.dataset.price) || DEFAULT_PRICE) * 100,
-            remaining: DEFAULT_CAPACITY,
-        });
-    });
 
     function selectedEvent() {
         const input = form.querySelector('input[name="event"]:checked');
@@ -242,7 +251,7 @@
         const event = eventCatalog.get(payload.eventSlug);
         const total = (event.amount / 100) * quantity;
         activeReservation = { payload, total };
-        setReviewValue('workshop', WORKSHOP_NAME);
+        setReviewValue('workshop', workshopCatalog.get(event.classSlug)?.name || event.title);
         setReviewValue('date', formatSessionDate(event.date));
         setReviewValue('time', SESSION_TIMES[event.period]);
         setReviewValue('customer', payload.name, payload.email);
@@ -341,6 +350,7 @@
     }
 
     function isStepAnswered(step) {
+        if (step.contains(dateGrid)) return Boolean(selectedEvent());
         const groups = new Set(
             Array.from(step.querySelectorAll('input[type="radio"]')).map((input) => input.name),
         );
@@ -389,15 +399,53 @@
     }
 
     function applyEventCalendar(events = []) {
+        eventCatalog.clear();
         events.forEach((event) => {
-            const input = form.querySelector(`input[name="event"][value="${event.slug}"]`);
-            if (!input) return;
             eventCatalog.set(event.slug, event);
-            const amount = Number(event.amount) / 100;
-            if (Number.isSafeInteger(amount) && amount > 0) {
-                input.dataset.price = String(amount);
-            }
         });
+        renderEventCalendar();
+    }
+
+    function renderEventCalendar() {
+        if (!dateGrid) return;
+        const selectedSlug = selectedEvent()?.slug;
+        dateGrid.replaceChildren();
+        for (const event of eventCatalog.values()) {
+            if (event.classSlug !== activeWorkshopSlug) continue;
+            const label = document.createElement('label');
+            label.innerHTML = '<input type="radio" name="event" required disabled><span><span class="booking-date-head"><span><small></small><span class="booking-date-label"></span></span><small class="booking-date-time"></small></span></span>';
+            const input = label.querySelector('input');
+            input.value = event.slug;
+            input.checked = event.slug === selectedSlug;
+            const date = new Date(`${event.date}T12:00:00Z`);
+            label.querySelector('small').textContent = new Intl.DateTimeFormat('en-GB', { weekday: 'short', timeZone: 'UTC' }).format(date);
+            label.querySelector('.booking-date-label').textContent = new Intl.DateTimeFormat('en-GB', { day: '2-digit', month: 'short', timeZone: 'UTC' }).format(date);
+            label.querySelector('.booking-date-time').textContent = SESSION_TIMES[event.period];
+            label.addEventListener('click', (click) => {
+                if (click.target === input || !input.checked || input.disabled) return;
+                click.preventDefault();
+                input.checked = false;
+                updateDateSelectionState();
+                updateSteps();
+            });
+            input.addEventListener('keydown', (key) => {
+                if ((key.key !== ' ' && key.key !== 'Enter') || !input.checked) return;
+                key.preventDefault();
+                input.checked = false;
+                updateDateSelectionState();
+                updateSteps();
+            });
+            dateGrid.append(label);
+        }
+        eventInputs = Array.from(dateGrid.querySelectorAll('input'));
+        updateEventChoices();
+    }
+
+    function updateAvailabilityStatus() {
+        if (!availabilityLoaded) return;
+        setStatus(eventInputs.some((input) => !input.disabled)
+            ? ''
+            : 'All sessions are currently booked. Please check back for new dates.');
     }
 
     async function loadAvailability() {
@@ -405,9 +453,10 @@
             const response = await fetch('/api/availability', { headers: { Accept: 'application/json' } });
             if (!response.ok) throw new Error('Availability could not be loaded');
             const data = await response.json();
-            applyEventCalendar(data.events || []);
+            (data.workshops || []).forEach((workshop) => workshopCatalog.set(workshop.slug, workshop));
             availabilityLoaded = true;
-            updateEventChoices();
+            applyEventCalendar(data.events || []);
+            updateAvailabilityStatus();
         } catch {
             availabilityLoaded = false;
             setStatus(previewFlowEnabled ? '' : 'Available sessions could not be loaded. Please try again.');
@@ -422,25 +471,9 @@
         });
     });
 
-    bookingToggle?.addEventListener('click', () => {
-        setBookingOpen(bookingToggle.getAttribute('aria-expanded') !== 'true');
-    });
-
-    dateLabels.forEach((label) => {
-        const input = label.querySelector('input[name="event"]');
-        label.addEventListener('click', (event) => {
-            if (event.target === input || !input.checked || input.disabled) return;
-            event.preventDefault();
-            input.checked = false;
-            updateDateSelectionState();
-            updateSteps();
-        });
-        input.addEventListener('keydown', (event) => {
-            if ((event.key !== ' ' && event.key !== 'Enter') || !input.checked) return;
-            event.preventDefault();
-            input.checked = false;
-            updateDateSelectionState();
-            updateSteps();
+    bookingToggles.forEach((button) => {
+        button.addEventListener('click', () => {
+            setBookingOpen(button.getAttribute('aria-expanded') !== 'true', button);
         });
     });
 
@@ -467,6 +500,10 @@
 
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
+        if (!selectedEvent()) {
+            setStatus('Choose an available session.');
+            return;
+        }
         if (!form.reportValidity()) return;
 
         const payload = {
