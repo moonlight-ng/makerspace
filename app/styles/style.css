@@ -17,7 +17,7 @@
     --text-secondary: #555555;
 
     /* Typography */
-    --base-size: 16px;
+    --base-size: 1rem;
     --line-height: 1.5;
 
     /* Spacing */
@@ -64,7 +64,7 @@ body::before {
 .section-title-mobile {
     display: none;
     font-family: var(--font-serif);
-    font-size: 1rem;
+    font-size: var(--base-size);
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -106,13 +106,13 @@ body::before {
 
 .text-caption {
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: var(--base-size);
     color: var(--text-secondary);
 }
 
 .text-footnote {
     font-family: var(--font-sans);
-    font-size: 0.8rem;
+    font-size: var(--base-size);
     color: var(--text-secondary);
     margin-top: var(--space-md);
 }
@@ -121,6 +121,7 @@ body::before {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    font-size: inherit;
 }
 
 html {
@@ -201,7 +202,7 @@ body.page-transition-out {
 
 .painting-hero-heading h1 {
     max-width: 10ch;
-    font-size: clamp(3.5rem, 8.2vw, 9rem);
+    font-size: var(--base-size);
     line-height: 0.86;
     letter-spacing: -0.04em;
 }
@@ -209,7 +210,7 @@ body.page-transition-out {
 .painting-kicker {
     margin-bottom: var(--space-sm);
     font-family: var(--font-serif);
-    font-size: 0.8rem;
+    font-size: var(--base-size);
     font-weight: 400;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -221,7 +222,7 @@ body.page-transition-out {
 
 .painting-summary {
     max-width: 27rem;
-    font-size: clamp(1.15rem, 2vw, 1.7rem);
+    font-size: var(--base-size);
     line-height: 1.25;
 }
 
@@ -244,7 +245,7 @@ body.page-transition-out {
 .painting-facts dt,
 .painting-facts dd {
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: var(--base-size);
     font-weight: 600;
 }
 
@@ -262,7 +263,7 @@ body.page-transition-out {
 .painting-primary-link,
 .painting-secondary-link {
     font-family: var(--font-serif);
-    font-size: 0.8rem;
+    font-size: var(--base-size);
     letter-spacing: 0.1em;
     text-transform: uppercase;
 }
@@ -344,7 +345,7 @@ body.page-transition-out {
 .painting-section-heading h2,
 .painting-calendar-heading h2,
 .painting-enrol h2 {
-    font-size: clamp(2.6rem, 5.5vw, 6rem);
+    font-size: var(--base-size);
     line-height: 0.95;
     letter-spacing: -0.045em;
 }
@@ -375,7 +376,7 @@ body.page-transition-out {
 
 .painting-class-number,
 .painting-class-practice {
-    font-size: 0.75rem;
+    font-size: var(--base-size);
     letter-spacing: 0;
     text-transform: none;
 }
@@ -386,7 +387,7 @@ body.page-transition-out {
 
 .painting-class-list h3 {
     margin: auto 0 var(--space-sm);
-    font-size: clamp(1.8rem, 3vw, 3rem);
+    font-size: var(--base-size);
     line-height: 1;
     letter-spacing: -0.04em;
 }
@@ -426,13 +427,13 @@ body.page-transition-out {
 }
 
 .painting-date-list span {
-    font-size: 0.75rem;
+    font-size: var(--base-size);
     color: var(--text-secondary);
 }
 
 .painting-date-list time {
     font-family: var(--font-sans);
-    font-size: clamp(1.1rem, 2vw, 1.6rem);
+    font-size: var(--base-size);
     font-weight: 600;
 }
 
@@ -474,7 +475,7 @@ body.page-transition-out {
     }
 
     .painting-hero-heading h1 {
-        font-size: clamp(3.3rem, 15vw, 6rem);
+        font-size: var(--base-size);
     }
 
     .painting-hero-details {
@@ -549,7 +550,7 @@ body.page-transition-out {
 
 .phase-meta {
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: var(--base-size);
     letter-spacing: 0.05em;
     color: var(--text-secondary);
     text-transform: uppercase;
@@ -558,7 +559,7 @@ body.page-transition-out {
 /* Prose below content (e.g. image) */
 .prose {
     font-family: var(--font-sans);
-    font-size: 1rem;
+    font-size: var(--base-size);
     line-height: var(--line-height);
     color: var(--text-primary);
 }
@@ -583,7 +584,7 @@ h3 {
 }
 
 h1 {
-    font-size: 2.2rem;
+    font-size: var(--base-size);
 }
 
 /* Number in title matches "Ajasa Street" (inherit h1 styling) */
@@ -609,11 +610,11 @@ h1 #animated-number {
 }
 
 h2 {
-    font-size: 1.8rem;
+    font-size: var(--base-size);
 }
 
 h3 {
-    font-size: 1.4rem;
+    font-size: var(--base-size);
 }
 
 p,
@@ -671,7 +672,7 @@ span {
 
     .nav-mobile .nav-trigger,
     .nav-mobile .nav-link {
-        font-size: 15px;
+        font-size: var(--base-size);
     }
 
     .nav-mobile .nav-overlay {
@@ -690,7 +691,7 @@ span {
     position: fixed;
     z-index: 100;
     font-family: var(--font-serif);
-    font-size: 13px;
+    font-size: var(--base-size);
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -742,7 +743,7 @@ span {
     border: 0;
     background: transparent;
     font-family: var(--font-serif);
-    font-size: 13px;
+    font-size: var(--base-size);
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -810,7 +811,7 @@ span {
     display: block;
     padding: 0.5rem 0;
     font-family: var(--font-serif);
-    font-size: 13px;
+    font-size: var(--base-size);
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -894,7 +895,7 @@ body.nav-body-open {
 
     h1,
     h2 {
-        font-size: 1.8rem;
+        font-size: var(--base-size);
     }
 
 }
@@ -914,7 +915,7 @@ blockquote {
     /* Quotes in Serif for elegance */
     font-style: normal;
     /* User Request: Not Italic */
-    font-size: 1rem;
+    font-size: var(--base-size);
     /* Matches Body Size */
     line-height: 1.5;
     margin: var(--space-md) 0;
@@ -926,7 +927,7 @@ cite {
     font-family: var(--font-serif);
     /* User Request: Serif */
     font-style: normal;
-    font-size: 0.9rem;
+    font-size: var(--base-size);
     letter-spacing: 0.05em;
     margin-top: var(--space-sm);
     display: block;
@@ -941,7 +942,7 @@ header p {
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
-    font-size: 0.9rem;
+    font-size: var(--base-size);
     color: var(--text-primary);
 }
 
@@ -954,7 +955,7 @@ header p {
     background: var(--text-primary);
     color: var(--bg-primary);
     font-family: var(--font-sans);
-    font-size: 0.75rem;
+    font-size: var(--base-size);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -975,7 +976,7 @@ button {
     padding: 0;
     font-family: var(--font-sans);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: var(--base-size);
     cursor: pointer;
     text-decoration: none !important;
     color: var(--text-primary);
@@ -1005,7 +1006,7 @@ button:hover {
 
 .question-row p {
     font-family: var(--font-serif);
-    font-size: 1.4rem;
+    font-size: var(--base-size);
     font-style: italic;
     text-align: center;
     max-width: 28em;
@@ -1025,7 +1026,7 @@ button:hover {
     padding: var(--space-sm);
     background: var(--bg-primary);
     font-family: var(--font-serif);
-    font-size: 13px;
+    font-size: var(--base-size);
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -1051,7 +1052,7 @@ button:hover {
 .foot-left p,
 .foot-right p {
     margin: 0;
-    font-size: inherit;
+    font-size: var(--base-size);
     font-family: inherit;
     font-weight: inherit;
     color: inherit;
@@ -1190,7 +1191,7 @@ button:hover {
     border: none;
     background: rgba(255, 255, 255, 0.9);
     color: var(--text-primary);
-    font-size: 1.5rem;
+    font-size: var(--base-size);
     line-height: 1;
     cursor: pointer;
     z-index: 2;
@@ -1262,7 +1263,7 @@ button:hover {
 
 .catalogue-info h3 {
     font-family: var(--font-serif);
-    font-size: 13px;
+    font-size: var(--base-size);
     font-weight: 400;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -1273,7 +1274,7 @@ button:hover {
 .catalogue-meta,
 .catalogue-details {
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: var(--base-size);
     color: var(--text-secondary);
     line-height: 1.4;
     margin: 0;
@@ -1334,7 +1335,7 @@ button:hover {
 
 .filter-title {
     font-family: var(--font-serif);
-    font-size: 13px;
+    font-size: var(--base-size);
     text-transform: uppercase;
     letter-spacing: 0.1em;
     margin-bottom: var(--space-sm);
@@ -1349,7 +1350,7 @@ button:hover {
 
 .filter-option {
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: var(--base-size);
     cursor: pointer;
     user-select: none;
     display: flex;
@@ -1442,7 +1443,7 @@ button:hover {
         padding: 0;
         background: transparent;
         font-family: var(--font-serif);
-        font-size: 13px;
+        font-size: var(--base-size);
         font-weight: 400;
         text-transform: uppercase;
         letter-spacing: 0.1em;
@@ -1462,7 +1463,7 @@ button:hover {
         padding: 0;
         background: transparent;
         font-family: var(--font-serif);
-        font-size: 13px;
+        font-size: var(--base-size);
         font-weight: 400;
         text-transform: uppercase;
         letter-spacing: 0.1em;
@@ -1571,7 +1572,7 @@ button:hover {
         background: var(--bg-primary);
         color: var(--text-primary);
         font-family: var(--font-serif);
-        font-size: 13px;
+        font-size: var(--base-size);
         font-weight: 400;
         text-transform: uppercase;
         letter-spacing: 0.1em;
@@ -1640,10 +1641,6 @@ body.product-slideshow-open {
 .making-booking-page {
     --making-line: rgba(17, 17, 17, 0.24);
     --making-muted: #686868;
-    --making-type-meta: 0.75rem;
-    --making-type-ui: 0.9rem;
-    --making-type-body: clamp(1rem, 1.35vw, 1.25rem);
-    --making-type-display: clamp(2.8rem, 7vw, 7rem);
     --making-inset-x: var(--space-md);
     font-family: var(--font-sans);
     background: #fff;
@@ -1682,7 +1679,7 @@ body.product-slideshow-open {
 .making-header a {
     color: var(--text-primary);
     font-family: var(--font-sans);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 500;
     text-decoration: none;
 }
@@ -1712,7 +1709,7 @@ body.product-slideshow-open {
 .making-wordmark {
     color: var(--text-primary);
     font-family: var(--font-sans);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 700;
 }
 
@@ -1756,7 +1753,7 @@ body.product-slideshow-open {
 .making-home-logo {
     max-width: 8.5ch;
     margin: 0;
-    font-size: clamp(4rem, 8vw, 8.5rem);
+    font-size: var(--base-size);
     line-height: 0.86;
 }
 
@@ -1771,7 +1768,7 @@ body.product-slideshow-open {
     max-width: 34rem;
     margin: 0;
     color: var(--text-primary);
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     font-weight: 400;
     line-height: 1.4;
 }
@@ -1799,7 +1796,7 @@ body.product-slideshow-open {
     border: 1px solid var(--text-primary);
     background: transparent;
     color: var(--text-primary);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     text-decoration: none;
     transition: background 0.15s ease, color 0.15s ease;
@@ -1906,26 +1903,26 @@ body.product-slideshow-open {
 
 .making-label {
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
 .making-introduction h2,
 .booking-heading h2 {
-    font-size: var(--making-type-display);
+    font-size: var(--base-size);
     line-height: 0.92;
 }
 
 .making-introduction > div > p {
     max-width: 43rem;
     margin: var(--space-md) 0;
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     line-height: 1.35;
 }
 
 .making-introduction a {
     color: var(--text-primary);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     text-decoration: none;
 }
@@ -1968,7 +1965,7 @@ h1.making-introduction-title {
     max-width: 18rem;
     margin: 0;
     color: var(--text-primary);
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     font-weight: 600;
     line-height: 1.4;
 }
@@ -2005,7 +2002,7 @@ h1.making-introduction-title {
 .rental-guidelines-title {
     display: block;
     color: var(--text-primary);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
 }
 
@@ -2033,7 +2030,7 @@ h1.making-introduction-title {
     max-width: 38rem;
     margin: 0;
     color: var(--text-primary);
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     font-weight: 400;
     line-height: 1.4;
     letter-spacing: normal;
@@ -2079,7 +2076,7 @@ h1.making-introduction-title {
 .capabilities-list li > span {
     padding-top: 0.2rem;
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -2097,7 +2094,7 @@ h1.making-introduction-title {
     grid-row: 1;
     max-width: none;
     margin: 0;
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     line-height: 1.25;
     letter-spacing: -0.015em;
 }
@@ -2106,7 +2103,7 @@ h1.making-introduction-title {
     grid-column: 1;
     grid-row: 2;
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
     letter-spacing: normal;
     text-transform: none;
@@ -2117,33 +2114,31 @@ h1.making-introduction-title {
     grid-row: 1 / span 2;
     max-width: 38rem;
     margin: 0;
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 400;
     line-height: 1.45;
 }
 
 @media (min-width: 769px) {
     .capabilities-list p {
-        font-size: var(--making-type-body);
+        font-size: var(--base-size);
         line-height: 1.35;
     }
 }
 
 .current-workshop {
-    --workshop-type-heading: 1.5rem;
-    --workshop-type-body: 1rem;
     display: block;
     background: #f3f0e8;
     color: #111;
     font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-    font-size: var(--workshop-type-body);
+    font-size: var(--base-size);
     line-height: 1.5;
 }
 
 .current-workshop h2.making-introduction-title {
     max-width: none;
     margin: 0 0 5rem;
-    font-size: var(--workshop-type-heading);
+    font-size: var(--base-size);
     font-weight: 700;
     line-height: 1.167;
     letter-spacing: -0.02em;
@@ -2151,7 +2146,7 @@ h1.making-introduction-title {
 
 .current-workshop .current-workshop-kicker {
     margin: 0;
-    font-size: var(--workshop-type-heading);
+    font-size: var(--base-size);
     font-weight: 700;
     line-height: 1.167;
     letter-spacing: -0.02em;
@@ -2179,7 +2174,7 @@ h1.making-introduction-title {
 .workshop-option > p,
 .workshop-option-category {
     margin: 0;
-    font-size: var(--workshop-type-body);
+    font-size: var(--base-size);
     font-weight: 400;
     line-height: 1.5;
 }
@@ -2201,7 +2196,7 @@ h1.making-introduction-title {
 
 .workshop-option-activities h4 {
     margin: 0 0 0.5rem;
-    font-size: var(--workshop-type-body);
+    font-size: var(--base-size);
     font-weight: 700;
     line-height: 1.5;
 }
@@ -2210,7 +2205,7 @@ h1.making-introduction-title {
     margin: 0;
     padding-left: 1.75rem;
     list-style: disc;
-    font-size: var(--workshop-type-body);
+    font-size: var(--base-size);
     line-height: 1.5;
 }
 
@@ -2243,13 +2238,13 @@ h1.making-introduction-title {
 
 .current-workshop-details dt {
     color: #686868;
-    font-size: var(--workshop-type-body);
+    font-size: var(--base-size);
     font-weight: 400;
 }
 
 .current-workshop-details dd {
     margin: 0.25rem 0 0;
-    font-size: var(--workshop-type-body);
+    font-size: var(--base-size);
     font-weight: 700;
 }
 
@@ -2269,7 +2264,7 @@ h1.making-introduction-title {
     background: transparent;
     color: #111;
     font-family: inherit;
-    font-size: var(--workshop-type-body);
+    font-size: var(--base-size);
     font-weight: 700;
     line-height: 1.5;
     cursor: pointer;
@@ -2288,7 +2283,7 @@ h1.making-introduction-title {
 
 .current-workshop .workshop-booking-heading {
     margin: 0 0 0.75rem;
-    font-size: var(--workshop-type-heading);
+    font-size: var(--base-size);
     font-weight: 700;
     line-height: 1.167;
 }
@@ -2311,7 +2306,7 @@ h1.making-introduction-title {
     max-width: 38rem;
     margin: 0 0 var(--space-md);
     color: var(--text-primary);
-    font-size: var(--workshop-type-body);
+    font-size: var(--base-size);
     font-weight: 400;
     line-height: 1.5;
 }
@@ -2380,7 +2375,7 @@ h1.making-introduction-title {
 .residency-hero h1 {
     max-width: 11ch;
     margin: 0;
-    font-size: clamp(3.4rem, 8vw, 8.5rem);
+    font-size: var(--base-size);
     line-height: 0.86;
 }
 
@@ -2388,7 +2383,7 @@ h1.making-introduction-title {
     grid-column: 2;
     max-width: 42rem;
     margin-top: var(--space-md);
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     line-height: 1.4;
 }
 
@@ -2408,7 +2403,7 @@ h1.making-introduction-title {
 .residency-invitation > div > p:not(.making-home-ctas) {
     max-width: 43rem;
     margin: 0 0 1em;
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     line-height: 1.4;
 }
 
@@ -2432,7 +2427,7 @@ h1.making-introduction-title {
     max-width: 12ch;
     margin: 0;
     color: #fff;
-    font-size: clamp(2.8rem, 6.5vw, 7rem);
+    font-size: var(--base-size);
     line-height: 0.92;
 }
 
@@ -2458,19 +2453,19 @@ h1.making-introduction-title {
 
 .residency-strands > li > span {
     color: rgba(255, 255, 255, 0.6);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
 }
 
 .residency-strands h3 {
     margin-bottom: 0.65rem;
     color: #fff;
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
 }
 
 .residency-strands p {
     max-width: 28rem;
     color: rgba(255, 255, 255, 0.78);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     line-height: 1.5;
 }
 
@@ -2548,7 +2543,7 @@ h1.making-introduction-title {
 .booking-form legend {
     width: 100%;
     margin-bottom: 0;
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
 }
 
@@ -2556,7 +2551,7 @@ h1.making-introduction-title {
     display: inline-block;
     width: 3.5rem;
     color: var(--making-muted);
-    font-size: inherit;
+    font-size: var(--base-size);
 }
 
 .booking-choice-grid {
@@ -2605,7 +2600,7 @@ h1.making-introduction-title {
     flex-direction: column;
     justify-content: space-between;
     padding: 1rem;
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     transition: background 0.15s ease, color 0.15s ease;
 }
@@ -2633,7 +2628,7 @@ h1.making-introduction-title {
 .booking-choice-grid small {
     display: block;
     color: inherit;
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -2717,7 +2712,7 @@ h1.making-introduction-title {
 
 .booking-period-time {
     color: inherit;
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -2732,7 +2727,7 @@ h1.making-introduction-title {
 .booking-price {
     margin-top: 0.75rem;
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -2746,7 +2741,7 @@ h1.making-introduction-title {
     display: block;
     margin-bottom: 0.5rem;
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -2758,7 +2753,7 @@ h1.making-introduction-title {
     border-radius: 0;
     background: transparent;
     color: var(--text-primary);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 500;
     outline: none;
 }
@@ -2777,7 +2772,7 @@ h1.making-introduction-title {
 
 .booking-submit-row p {
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -2787,7 +2782,7 @@ h1.making-introduction-title {
     border: 1px solid var(--text-primary);
     background: #fff;
     color: var(--text-primary);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     text-decoration: none;
 }
@@ -2826,7 +2821,7 @@ h1.making-introduction-title {
     padding: 0.7rem 0;
     border: 0;
     background: transparent;
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     line-height: 1;
     cursor: pointer;
 }
@@ -2851,14 +2846,14 @@ h1.making-introduction-title {
     justify-content: center;
     border-left: 1px solid var(--making-line);
     border-right: 1px solid var(--making-line);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
 }
 
 .booking-submit-row .booking-total {
     color: var(--text-primary);
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     font-weight: 600;
     line-height: 1;
 }
@@ -2866,7 +2861,7 @@ h1.making-introduction-title {
 .booking-status {
     margin-top: var(--space-sm);
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -2882,7 +2877,7 @@ h1.making-introduction-title {
 .current-workshop .booking-submit-row button,
 .current-workshop .booking-order-total > span,
 .current-workshop .booking-status {
-    font-size: var(--workshop-type-body);
+    font-size: var(--base-size);
     line-height: 1.5;
 }
 
@@ -2900,7 +2895,7 @@ h1.making-introduction-title {
 }
 
 .current-workshop .booking-total {
-    font-size: var(--workshop-type-heading);
+    font-size: var(--base-size);
     font-weight: 700;
     line-height: 1.167;
 }
@@ -2964,7 +2959,7 @@ h1.making-introduction-title {
 .booking-review-header h2 {
     max-width: none;
     margin-top: 0.35rem;
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     line-height: 1.25;
     letter-spacing: normal;
@@ -2983,13 +2978,13 @@ h1.making-introduction-title {
 
 .booking-review-timer span {
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
     white-space: nowrap;
 }
 
 .booking-review-timer strong {
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     font-variant-numeric: tabular-nums;
     letter-spacing: normal;
@@ -3005,7 +3000,7 @@ h1.making-introduction-title {
     max-width: 30rem;
     margin: 0 0 var(--space-sm);
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
     line-height: 1.45;
 }
@@ -3036,13 +3031,13 @@ h1.making-introduction-title {
 
 .booking-review-summary dt {
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
 .booking-review-summary dd {
     min-width: 0;
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     overflow-wrap: anywhere;
 }
@@ -3051,7 +3046,7 @@ h1.making-introduction-title {
     display: block;
     margin-top: 0.2rem;
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -3062,7 +3057,7 @@ h1.making-introduction-title {
 }
 
 .booking-review-summary-total dd {
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     letter-spacing: normal;
     line-height: 1.2;
 }
@@ -3072,7 +3067,7 @@ h1.making-introduction-title {
     margin-top: var(--space-sm);
     padding-left: 0;
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
     line-height: 1.45;
 }
@@ -3098,7 +3093,7 @@ h1.making-introduction-title {
     min-height: 3.4rem;
     padding: 0.9rem 1.2rem;
     border: 1px solid var(--text-primary);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     cursor: pointer;
 }
@@ -3187,7 +3182,7 @@ body.booking-payment-preview-open {
 }
 
 .booking-payment-preview-header strong {
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
 }
 
 .booking-payment-preview-close {
@@ -3195,7 +3190,7 @@ body.booking-payment-preview-open {
     border: 0;
     background: transparent;
     color: var(--text-primary);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 600;
     cursor: pointer;
 }
@@ -3206,7 +3201,7 @@ body.booking-payment-preview-open {
 
 .booking-payment-preview-copy h2 {
     margin: 0.4rem 0 0.75rem;
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     line-height: 1.25;
     letter-spacing: normal;
     outline: none;
@@ -3215,7 +3210,7 @@ body.booking-payment-preview-open {
 .booking-payment-preview-copy > p:last-child {
     max-width: 28rem;
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     line-height: 1.45;
 }
 
@@ -3233,7 +3228,7 @@ body.booking-payment-preview-open {
 
 .booking-payment-preview-meta dt,
 .booking-payment-preview-meta dd {
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -3248,7 +3243,7 @@ body.booking-payment-preview-open {
     border: 1px solid var(--text-primary);
     background: var(--text-primary);
     color: #fff;
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     cursor: pointer;
 }
@@ -3295,7 +3290,7 @@ body.booking-payment-preview-open {
     max-width: 38rem;
     margin: 0;
     color: var(--text-primary);
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     font-weight: 400;
     line-height: 1.4;
 }
@@ -3315,7 +3310,7 @@ body.booking-payment-preview-open {
 
 .payment-receipt dt,
 .payment-receipt dd {
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -3340,7 +3335,7 @@ body.booking-payment-preview-open {
     border: 1px solid var(--text-primary);
     background: #fff;
     color: var(--text-primary);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 600;
     text-decoration: none;
     cursor: pointer;
@@ -3385,20 +3380,20 @@ body.booking-payment-preview-open {
 
 .preparation-list > li > span {
     color: var(--making-muted);
-    font-size: var(--making-type-meta);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
 .preparation-list h3 {
     margin-bottom: 0.4rem;
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     line-height: 1.2;
 }
 
 .preparation-list p {
     max-width: 38rem;
     color: var(--text-primary);
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     font-weight: 400;
     line-height: 1.4;
 }
@@ -3407,7 +3402,7 @@ body.booking-payment-preview-open {
     max-width: 38rem;
     margin: 0;
     color: var(--text-primary);
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     font-weight: 400;
     line-height: 1.4;
 }
@@ -3424,7 +3419,7 @@ body.booking-payment-preview-open {
 .first-visit-columns p,
 .first-visit-contact > p {
     color: var(--text-primary);
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     font-weight: 400;
     line-height: 1.4;
 }
@@ -3448,7 +3443,7 @@ body.booking-payment-preview-open {
     gap: var(--space-sm) var(--space-md);
     align-items: end;
     padding: var(--space-md) var(--making-inset-x);
-    font-size: var(--making-type-ui);
+    font-size: var(--base-size);
     font-weight: 500;
 }
 
@@ -3521,7 +3516,7 @@ body.booking-payment-preview-open {
 .contact-address p:not(.making-label) {
     margin: 0;
     color: var(--text-primary);
-    font-size: var(--making-type-body);
+    font-size: var(--base-size);
     font-weight: 500;
     line-height: 1.4;
 }
@@ -3565,7 +3560,7 @@ body.booking-payment-preview-open {
         border: 0;
         background: transparent;
         color: var(--text-primary);
-        font-size: var(--making-type-ui);
+        font-size: var(--base-size);
         font-weight: 600;
         cursor: pointer;
         transition: color 0.2s ease;
@@ -3649,7 +3644,7 @@ body.booking-payment-preview-open {
         padding: 0.42rem 0;
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         color: #fff;
-        font-size: clamp(2.2rem, 10.5vw, 4rem);
+        font-size: var(--base-size);
         font-weight: 600;
         line-height: 0.95;
         letter-spacing: -0.045em;
@@ -3662,7 +3657,7 @@ body.booking-payment-preview-open {
 
     .making-mobile-menu-links a > span {
         color: rgba(255, 255, 255, 0.5);
-        font-size: var(--making-type-meta);
+        font-size: var(--base-size);
         font-weight: 500;
         letter-spacing: normal;
     }
@@ -3689,7 +3684,7 @@ body.booking-payment-preview-open {
     .making-mobile-menu-footer p {
         margin: 0;
         color: rgba(255, 255, 255, 0.55);
-        font-size: var(--making-type-meta);
+        font-size: var(--base-size);
         font-weight: 500;
         line-height: 1.4;
     }
@@ -3718,7 +3713,7 @@ body.booking-payment-preview-open {
 
     .making-home-logo {
         max-width: 100%;
-        font-size: clamp(3.55rem, 17.5vw, 5.5rem);
+        font-size: var(--base-size);
         line-height: 0.86;
     }
 
@@ -4104,7 +4099,7 @@ body.booking-payment-preview-open {
 
 .product-slideshow-label-row dt {
     font-family: var(--font-sans);
-    font-size: 0.7rem;
+    font-size: var(--base-size);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.15em;
@@ -4114,7 +4109,7 @@ body.booking-payment-preview-open {
 
 .product-slideshow-label-row dd {
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: var(--base-size);
     font-weight: 400;
     color: var(--text-primary);
     margin: 0;
@@ -4134,7 +4129,7 @@ body.booking-payment-preview-open {
 
 .product-slideshow-counter {
     font-family: var(--font-sans);
-    font-size: 0.7rem;
+    font-size: var(--base-size);
     font-weight: 600;
     letter-spacing: 0.1em;
     color: var(--text-secondary);
@@ -4147,7 +4142,7 @@ body.booking-payment-preview-open {
     background: var(--bg-primary);
     color: var(--text-primary);
     font-family: var(--font-sans);
-    font-size: 0.85rem;
+    font-size: var(--base-size);
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.1em;
