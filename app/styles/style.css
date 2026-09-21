@@ -1680,7 +1680,7 @@ body.product-slideshow-open {
     color: var(--text-primary);
     font-family: var(--font-sans);
     font-size: var(--base-size);
-    font-weight: 500;
+    font-weight: 400;
     text-decoration: none;
 }
 
@@ -1802,7 +1802,7 @@ body.product-slideshow-open {
     background: transparent;
     color: var(--text-primary);
     font-size: var(--base-size);
-    font-weight: 600;
+    font-weight: 400;
     text-decoration: none;
     transition: background 0.15s ease, color 0.15s ease;
 }
@@ -2067,22 +2067,12 @@ h1.making-introduction-title {
 .capabilities-list li {
     max-width: none;
     min-height: 0;
-    display: grid;
-    grid-template-columns: 2rem minmax(0, 1fr);
-    gap: 0.5rem;
     padding: 1.25rem 0;
     border-bottom: 1px solid var(--making-line);
 }
 
 .capabilities-list li:last-child {
     border-bottom: 0;
-}
-
-.capabilities-list li > span {
-    padding-top: 0.2rem;
-    color: var(--making-muted);
-    font-size: var(--base-size);
-    font-weight: 500;
 }
 
 .capabilities-list li > div {
@@ -2109,7 +2099,7 @@ h1.making-introduction-title {
     grid-row: 2;
     color: var(--making-muted);
     font-size: var(--base-size);
-    font-weight: 500;
+    font-weight: 400;
     letter-spacing: normal;
     text-transform: none;
 }
@@ -3566,7 +3556,7 @@ body.booking-payment-preview-open {
         background: transparent;
         color: var(--text-primary);
         font-size: var(--base-size);
-        font-weight: 600;
+        font-weight: 400;
         cursor: pointer;
         transition: color 0.2s ease;
     }
@@ -3650,7 +3640,7 @@ body.booking-payment-preview-open {
         border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         color: #fff;
         font-size: var(--base-size);
-        font-weight: 600;
+        font-weight: 400;
         line-height: 0.95;
         letter-spacing: -0.045em;
         text-decoration: none;
@@ -3663,7 +3653,7 @@ body.booking-payment-preview-open {
     .making-mobile-menu-links a > span {
         color: rgba(255, 255, 255, 0.5);
         font-size: var(--base-size);
-        font-weight: 500;
+        font-weight: 400;
         letter-spacing: normal;
     }
 
