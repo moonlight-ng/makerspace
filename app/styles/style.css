@@ -1775,7 +1775,7 @@ body.product-slideshow-open {
 
 /* The introductory paragraph is the only exception to the shared text size. */
 .making-home-intro > div > p:not(.making-home-ctas) {
-    font-size: 1.5rem;
+    font-size: 1.3125rem;
 }
 
 .making-home-intro > div > p strong {
