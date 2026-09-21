@@ -1773,6 +1773,11 @@ body.product-slideshow-open {
     line-height: 1.4;
 }
 
+/* The introductory paragraph is the only exception to the shared text size. */
+.making-home-intro > div > p:not(.making-home-ctas) {
+    font-size: 1.5rem;
+}
+
 .making-home-intro > div > p strong {
     font-weight: 700;
 }
